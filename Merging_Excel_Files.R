@@ -1,8 +1,5 @@
 # Merging Excel Files with readxl ----
 
-rm(list=ls()) # Clean all objects from memory
-ls()          # List the current variables in memory
-
 library(readxl)
 library(data.table)
 
