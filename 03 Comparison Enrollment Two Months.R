@@ -95,7 +95,7 @@ comparison %>%
                 Practice_Current_Month == "CAROLINA URGENT AND FAMILY CARE")
 
 
-# 8 WRITE RESULTS ------------------------------
+# 8 WRITE RESULTS -------------------------------
 
 # outputfile
 # fwrite(AllEnrollees, outputfile)
