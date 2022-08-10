@@ -31,7 +31,7 @@ currPPL <- "202106"     # Update
 
 # Location of files: Paths / Filenames
 
-path            <- "Monthly_Enrollment"   
+path            <- "PopulationSamples"   
 inputfile   <- paste0("Enrollment_PPL_", currPPL, ".csv")
 outputfile  <- paste0("Monthly_Enrollment//MedicalConditions_", currPPL, ".csv")
 

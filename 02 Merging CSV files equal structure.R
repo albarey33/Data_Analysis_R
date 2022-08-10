@@ -2,7 +2,11 @@
 #########################################################################.
 ##################### CARE MANAGEMENT - MONTHLY ENROLLMENT  #############.
 # SCRIPT / FUNCTION TO MERGE CSV FILES SHOWING ROWS AND COLUMNS PER FILE
-#########################################################################.
+# USE CASE: TO BUILD THE MONTHLY ENROLLMENT LIST DATA CSV FILE 
+# FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
+# From PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
+# FREQUENCY: Execute this script after enrollment ONCE A MONTH
+###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
 
@@ -21,7 +25,7 @@ currPPL <- "202106"     # Update
 
 # Paths
 # Location of Source files
-path            <- "Monthly_Enrollment"       
+path            <- "PopulationSamples"       
 
 # 2 FUNCTIONS -------------------
 
@@ -31,7 +35,8 @@ fx_append_csvfiles <- function(list_of_csv_files, PPLini, PPLfin){
   for(i in seq_along(list_of_csv_files)){
     df.list <- lapply(list_of_csv_files[i], read.csv)  ######### Convert list to Data frame 
     df.list[[1]]$PPL <- substr(list_of_csv_files[i], PPLini, PPLfin)
-    print(paste(i," - Number of records in ",list_of_csv_files[i]," = ",nrow(df.list[[1]])," ; columns = ",length(df.list[[1]]),sep=""))
+    print(paste(i," - Number of records in ",list_of_csv_files[i]," = ",
+                nrow(df.list[[1]])," ; columns = ",length(df.list[[1]]),sep=""))
     mytypelist <- append(mytypelist, df.list)
   }
   df <- data.frame(dplyr::bind_rows(mytypelist))
@@ -44,6 +49,7 @@ filenames_list <- list.files(path= path, full.names=TRUE,
                              pattern=paste0("^Patient.*?",currPPL,"_1000pts.csv"))
 filenames_list
 
+# Locate the data month on the name
 locPPL <- regexpr(currPPL,filenames_list[1])[1]  # Locate pattern in string
 
 # Apply function
@@ -55,6 +61,9 @@ dim(df_PPL_PHD)
 
 # 4 WRITE RESULTING DATA TABLE -------------------------------------------
 # 
- Sys.time() - st
+# Resulting file same as Procedure "01 Merging Excel files with equal structure.R"
+
+Sys.time() - st
 
 #################### END ------ 
+

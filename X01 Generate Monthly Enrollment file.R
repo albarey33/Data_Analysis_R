@@ -32,7 +32,7 @@ currPPL <- "202106"     # Update
 
 # Paths
 # Location of Source files
-path            <- "Monthly_Enrollment"       
+path            <- "PopulationSamples"       
 #resultingfile   <- "data_merging_files//result_table.csv" 
 # Location of resulting file ----
 resultingfile   <- paste0("Monthly_Enrollment//Enrollment_PPL_", currPPL, ".csv")

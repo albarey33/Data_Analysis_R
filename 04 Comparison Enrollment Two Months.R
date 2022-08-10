@@ -1,9 +1,12 @@
 
-###################################################################.
+#######################################################################################.
 ######### COMPARISON OF ENROLLMENT IN TWO MONTHS
+# SCRIPT: USE DPLYR TO SUMMARISE CHANGES
+# USE CASE: COMPARE TWO ENROLLMENT MONTHS TO TALLY CHANGES IN ENROLLMENT AND PRACTICES PER PATIENT
 # Identify New and Unenrolled Patients and Changes in Practice
-# Execute this script after enrollment ONCE A MONTH
-###################################################################.
+# FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
+# FREQUENCY: Execute this script after enrollment ONCE A MONTH
+######################################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
 
@@ -20,21 +23,20 @@ st <- Sys.time()
 # .libPaths() ###  Check the default folder where packages are installed
 
 # Load-multiple-packages-at-once
-required_packages <- c("dplyr", "data.table", "lubridate", 
-                       "tidyverse", "readxl")
+required_packages <- c("dplyr", "data.table")#, "lubridate", "tidyverse")
 lapply(required_packages, library, character.only = TRUE)
 
 # 1 PARAMETERS CHANGE NAMES / UPDATE --------------------------------------------------
 
 # Location of files: Paths / Filenames
 
-path            <- "Monthly_Enrollment"   
+path            <- "PopulationSamples"   
 
 # 2 FUNCTIONS -------------------
 
 # Function Convert Data to Money values without commas
-tablex       <- function(x){print(table(x, useNA = 'always'))}
-tablexy      <- function(x,y){print(table(x,y, useNA = 'always'))}
+ tablex       <- function(x){print(table(x, useNA = 'always'))}
+ tablexy      <- function(x,y){print(table(x,y, useNA = 'always'))}
 
 # 3 READ INPUT FILES - TWO MONTHS OF DATA  ----------
 
@@ -78,6 +80,7 @@ head(comparison,5)
 
 # Table Recap New and Unenrolled patients
 tablexy(comparison$Prev_Month, comparison$Curr_Month)
+
 comparison %>% group_by(Prev_Month, Curr_Month) %>% tally()
 
 # 6 CHECK THE MOST FREQUENT CHANGES OF PRACTICES -----
