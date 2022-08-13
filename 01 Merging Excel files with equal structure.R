@@ -3,7 +3,7 @@
 # SCRIPT: READ EXCEL FILES WITH EQUAL STRUCTURE
 # USE CASE: TO BUILD THE MONTHLY ENROLLMENT LIST DATA CSV FILE 
 # FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
-# From PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
+# Data Source: PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
 # FREQUENCY: Execute this script after enrollment ONCE A MONTH
 ###################################################################.
 
@@ -86,7 +86,7 @@ head(PPL_df,1)
 dim(PPL_df)
 str(PPL_df)
 
-# 3 CHANGE DF FIELD NAMES WITHOUT NUMBERS USING REGEX -----------------------
+# 3 CHANGE DF FIELD NAMES WITHOUT NUMBERS USING pattern + REGEX ---------------
 # PREFIXED WITH X FIELD NAMES AUTOMATICALLY WHEN MERGED 
 names(PPL_df) <- sub("X[0-9]{1,2}..","",names(PPL_df))  # Regular expressions
 PPL_df$PPL <- currPPL  # Add column current month

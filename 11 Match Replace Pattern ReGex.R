@@ -1,9 +1,40 @@
 
 ###################################################################.
-# SCRIPT: APPLY CHANGES TO A GROUP OF FIELDS BY BATCH
+# SCRIPT: REGULAR EXPRESSIONS UTILIZED IN SCRIPTS
 # Example: Change old names of Practices by new ones defined in table
 # USE CASE: One Step to arrange the data frames
 ###################################################################.
+
+# Substrings of a Character Vector
+# Extract or replace substrings in a character vector.
+
+df <- data.frame(Zip = c("28377-0000","28306-0000","28314-0000",
+                         "28342-0000","28303-0000","27332-0000"))
+df
+
+substr(df$Zip,1,5)
+
+
+# grep - Pattern Matching and Replacement 
+x <- "$12,543.43"
+as.numeric(gsub("[\\$,]", "", x))
+
+df <- data.frame(Int_Date = c("12/9/2019 12:00:00 AM",
+                              "2/20/2020 12:00:00 AM",
+                              "5/4/2020 12:00:00 AM"))
+gsub('([0-9]+) .*', '\\1', df$Int_Date)
+sub(" 12:00:00 AM","",df$Int_Date)
+
+# Values with a string in pattern
+grep("2020",df$Int_Date, value = T )
+
+# Remove comma in 1000 value
+df <- data.frame(Score = c("1,000","702","785","843","757"))
+as.integer(gsub("[\\,]", "", df$Score))
+
+
+
+
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
 
@@ -52,13 +83,29 @@ dim(PPL_df)
 head(PPL_df)
 
 ################################################################################.
-# 4 APPLY CHANGES TO GROUPS OF FIELDS - COST FIELDS ----
+# 4 OTHER CHANGES TO GROUPS OF FIELDS - COST FIELDS ----
 
 # * 4.1 COST - CHECK RANGE --------------
 
 # Location of Cost fields
 
 str(PPL_df)
+
+# Relocate (move) fields to the beginning
+PPL_df <- PPL_df %>% relocate(Medicaid.ID, Patient.Name)
+
+PPL_df$Primary.Care.Manager
+
+
+tablex(nchar(PPL_df$DOB))
+# tablex(nchar(PPL_df$DOB)) <- as.character(PPL_df$DOB, "%m/%d/%Y") # FIX
+# as.character(PPL_df$DOB, "%m/%d/%Y")
+# as.character(PPL_df$DOB, "%d/%m/%Y")
+
+PPL_df %>% summarise(EDVs = sum(ED.Visits..Last.12.mos., na.rm = T))
+PPL_df %>% summarise(IPVs = sum(Inpatient.Admissions..Last.12.mos., na.rm = T))
+
+
 # First Column related to cost
 FirstCost <- match('Total.Healthcare.Cost..Last.12.mos.....', names(PPL_df))
 FirstCost    # Location of First Column related to cost

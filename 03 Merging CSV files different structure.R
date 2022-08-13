@@ -4,7 +4,7 @@
 # SCRIPT / FUNCTION TO HIGHLIGHT DISCREPANCIES SO THAT THEY CAN BE DELETE OR RENAMED
 # USE CASE: ARRANGE FILES WITH DIFFERENT STRUCTURE BEFORE MERGE THEM
 # FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
-# From PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
+# Data Source: PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
 # FREQUENCY: Execute this script after enrollment ONCE A MONTH
 ######################################################################################.
 
@@ -48,6 +48,9 @@ tibble_2mo <- fx_append_csvfile(filenames_list[2])
 head(tibble_1mo,2)
 head(tibble_2mo,2)
 
+# Example of Merging tables with different structure / field names
+str(bind_rows(tibble_1mo, tibble_2mo))  
+
 # 3 COMPARISON FIELDS TWO DATA FRAMES STRUCTURE AND COLUMN NAMES -----------------------
 # The first file has 9 columns and the second file has 12 columns. Before 
 # merge them all the columns have to match in names.
@@ -84,6 +87,8 @@ tibble_1mo <- tibble_1mo %>% rename(Medicaid.ID = Current.MID,
 
 fx_comparison_two_DFs_Fields(tibble_1mo, tibble_2mo)
 
-# Result zero fields with discrepancies. The fields are ready to merge
+# Result zero fields with discrepancies. The fields are ready to merge correctly
+
+bind_rows(tibble_1mo, tibble_2mo)
 
 # END -------

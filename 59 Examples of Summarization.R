@@ -52,13 +52,29 @@ dim(PPL_df)
 head(PPL_df)
 
 ################################################################################.
-# 4 APPLY CHANGES TO GROUPS OF FIELDS - COST FIELDS ----
+# 4 OTHER CHANGES TO GROUPS OF FIELDS - COST FIELDS ----
 
 # * 4.1 COST - CHECK RANGE --------------
 
 # Location of Cost fields
 
 str(PPL_df)
+
+# Relocate (move) fields to the beginning
+PPL_df <- PPL_df %>% relocate(Medicaid.ID, Patient.Name)
+
+PPL_df$Primary.Care.Manager
+
+
+tablex(nchar(PPL_df$DOB))
+# tablex(nchar(PPL_df$DOB)) <- as.character(PPL_df$DOB, "%m/%d/%Y") # FIX
+# as.character(PPL_df$DOB, "%m/%d/%Y")
+# as.character(PPL_df$DOB, "%d/%m/%Y")
+
+PPL_df %>% summarise(EDVs = sum(ED.Visits..Last.12.mos., na.rm = T))
+PPL_df %>% summarise(IPVs = sum(Inpatient.Admissions..Last.12.mos., na.rm = T))
+
+
 # First Column related to cost
 FirstCost <- match('Total.Healthcare.Cost..Last.12.mos.....', names(PPL_df))
 FirstCost    # Location of First Column related to cost

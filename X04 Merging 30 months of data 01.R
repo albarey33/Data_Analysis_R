@@ -1,3 +1,23 @@
+# FUNCTION TO ELIMINATE GROUP OF FIELDS BY WORDS
+fx_eliminate_groups_fields <- function(fields_eliminate, df){
+  for (i in seq_along(fields_eliminate)){
+    print("DELETE NEXT GROUP OF FIELDS: ")
+    print(names(df)[grepl(fields_eliminate[i], names(df))])
+    df <- df[,!grepl(fields_eliminate[i], names(df))]
+  }
+  df
+}
+
+# Function Convert Yes to Unos
+fx_convert_Yes_to_Unos <-   function(x){ifelse(x == "Yes",1L,0L)}
+
+# TABLES USENA = 'always'
+tablex <- function(x){print(table(x, useNA = 'always'))}
+tablexy <- function(x,y){print(table(x,y, useNA = 'always'))}
+
+
+#############################################################.
+
 # PREPARE INSTALL CALL PACKAGES -----------------------------
 
 rm(list=ls())    # Delete all objects
@@ -63,15 +83,6 @@ fx_comparison_two_DFs_Fields <- function(df_x, df_y){
   print(compardf)
 }
 
-# FUNCTION TO ELIMINATE GROUP OF FIELDS BY WORDS
-fx_eliminate_groups_fields <- function(fields_eliminate, df){
-  for (i in seq_along(fields_eliminate)){
-    print("DELETE NEXT GROUP OF FIELDS: ")
-    print(names(df)[grepl(fields_eliminate[i], names(df))])
-    df <- df[,!grepl(fields_eliminate[i], names(df))]
-  }
-  df
-}
 
 # FUNCTION CHANGE PRACTICE NAMES
 fx_change_Practice_Names <- function(PCP_field_name, df, dfChanges){
@@ -90,12 +101,6 @@ fx_nulltozero <- function(x){ifelse(is.na(x),0,x)} #
 # Function Convert Data to Money values
 fx_convmoney <-   function(x){as.numeric(gsub("[\\$,]", "", x))} # 
 
-# Function Convert Yes to Unos
-fx_convert_Yes_to_Unos <-   function(x){ifelse(x == "Yes",1L,0L)}
-
-# TABLES USENA = 'always'
-tablex <- function(x){print(table(x, useNA = 'always'))}
-tablexy <- function(x,y){print(table(x,y, useNA = 'always'))}
 
 ###########################################################################o
 ###########################################################################o
@@ -366,12 +371,6 @@ tablexy(ALL_PPL$PPL, nchar(ALL_PPL$Date.of.Last.CM.Interaction))
 
 # 4 PPL 201903 - 202005 (15 MONTHS) DF CONDITIONS UNTIL MAY 2020 -----------------------
 
-setwd("C:/Users/bbacareyes/")
-setwd("./OneDrive - Carolina Collaborative Community Care/")
-setwd("./DATA_Reports/")
-setwd("./REPORT_4C_MONTHLY_ENROLLMENT/")
-setwd("./DATA_PPL_2019_03_to_2020_05") # SET WORKING DIRECTORY
-
 # * 4.1 DF CONDITIONS 15 MONTHS UNTIL MAY 2020 ------
 
 list_MemDash <- list.files(path=getwd(), pattern="PPL_FLTM_DATA_", full.names=FALSE)
@@ -632,11 +631,6 @@ tail(ALL_PPL %>% group_by(PPL) %>% summarise(EDVs = sum(ED.Visits..Last.12.mos.,
 # * 5.1 Read LIST OF CSV files --------------------------------------
 
 #setwd("D:/Information Technology/DATA_Reports/REPORT_4C_MONTHLY_ENROLLMENT/DATA_PPL_2019_02_and_before")   # SET WORKING DIRECTORY
-setwd("C:/Users/bbacareyes/")
-setwd("./OneDrive - Carolina Collaborative Community Care/")
-setwd("./DATA_Reports/")
-setwd("./REPORT_4C_MONTHLY_ENROLLMENT/")
-setwd("./DATA_PPL_2019_02_and_before") # SET WORKING DIRECTORY
 getwd()
 
 list_PREV <- list.files(path=getwd(), pattern="^PPL_Data", full.names=FALSE)
@@ -1006,9 +1000,6 @@ rm(PCPchng)
 
 # * 6.1 ADD PRACTICES TYPE COLUMN ---------------------------------
 #setwd("D:/Information Technology/DATA_Reports/@Tables_Data")   
-setwd("C:/Users/bbacareyes/")
-setwd("./OneDrive - Carolina Collaborative Community Care/")
-setwd("./DATA_Reports/")
 setwd("./@Tables_Data/")
 getwd()
 
@@ -1526,10 +1517,6 @@ ALL_PPL %>% filter(PPL == '202105') %>% distinct(Medicaid.ID) %>% tally()
 # 9  FWRITE BLOCKS OF DATA BY PERIOD -------------------
 
 #setwd("D:/Information Technology/DATA_Reports/ACCREDITATION REPORTS/data_ENROLLMENT_HOSPITAL_VISITS_from_R")
-setwd("C:/Users/bbacareyes/")
-setwd("./OneDrive - Carolina Collaborative Community Care/")
-setwd("./DATA_Reports/")
-setwd("./DATAPROCESSED_FROM_R") # SET WORKING DIRECTORY
 
 #fwrite(racetable,     "racetable_from_R.csv")
 fwrite(dfPatient,     "dfPatient_from_R.csv")

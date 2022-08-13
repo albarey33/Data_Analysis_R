@@ -1,11 +1,10 @@
 
 #######################################################################################.
 ######### COMPARISON OF ENROLLMENT IN TWO MONTHS
-# SCRIPT: USE DPLYR TO SUMMARISE CHANGES
-# USE CASE: COMPARE TWO ENROLLMENT MONTHS TO TALLY CHANGES IN ENROLLMENT AND PRACTICES PER PATIENT
+# SCRIPT: USE DPLYR TO VIEW AND SUMMARISE SPECIFIC CHANGES
+# USE CASE: COMPARE TWO ENROLLMENT MONTHS AND TALLY CHANGES IN ENROLLMENT AND PRACTICES PER PATIENT
 # Identify New and Unenrolled Patients and Changes in Practice
-# FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
-# FREQUENCY: Execute this script after enrollment ONCE A MONTH
+# PURPOSE: FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
 ######################################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------

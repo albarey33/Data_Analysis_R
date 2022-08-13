@@ -1,7 +1,7 @@
 
 ###################################################################.
-# SCRIPT: SPLIT ONE COLUMN INTO TWO FIELDS
-# USE CASE: One Step to arrange the data frames
+# SCRIPT: ADD INDEX COLUMN TO DATA FRAME
+# USE CASE: To de-identify patients and not showing PHI
 ###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -16,7 +16,7 @@ ls() # List variables in memory
 st <- Sys.time()
 
 # Load-multiple-packages-at-once
-required_packages <- c("dplyr", "readxl", "stringr")
+required_packages <- c("dplyr", "stringr")
 lapply(required_packages, library, character.only = TRUE)
 
 # 1 PARAMETERS CHANGE NAMES / UPDATE --------------------------------------------------
@@ -28,7 +28,7 @@ path            <- "PopulationSamples"
 # Read sample files using full path and regex (known pattern)
 
 filenames_list <- list.files(path= path, full.names=TRUE, 
-                 pattern=paste0("^MergedFile.*?.csv"))
+                             pattern=paste0("^MergedFile.*?.csv"))
 filenames_list
 
 # Function: Read CSV file showing number of rows and columns
@@ -39,51 +39,21 @@ fx_readfiles <- function(filename){
               " ; columns = ",length(csvfile),sep=""))
   dfcsvfile <- data.frame(csvfile)
   dfcsvfile 
-  }
+}
 
 # Apply defined function to list
 PPL_df <- fx_readfiles(filenames_list)
 class(PPL_df)
 dim(PPL_df)
 
-# Structure of Fields with "Practice" in their names
-str(PPL_df[c(grep("Practice",names(PPL_df)))])
+ 
+# 3 INDEX UNIQUE ROWS ENROLLMENT  E0000000 ---------
 
-# 5 SPLIT COLUMN PRACTICE + NPI USING DIVIDER ": "  -------
+PPL_df$Index <- paste0('E',stringr::str_pad(1:nrow(PPL_df), 7, side="left", pad="0"))
 
-head(str_split_fixed(PPL_df$Practice...NPI, ": ", n = 2),5) # Field to split
+# To move Index field at the left of the data table
+PPL_df <- PPL_df %>% select(Index, everything())
+head(PPL_df)
 
-dfSplitPracticeNPI <- str_split_fixed(PPL_df$Practice...NPI, ": ", n = 2) 
+str(PPL_df[1:10])
 
-head(dfSplitPracticeNPI, 15)
-
-dfSplitPracticeNPI<- data.frame(dfSplitPracticeNPI) # Convert matrix to dataframe
-
-# 
-names(dfSplitPracticeNPI) <- c("Practice_Name", "Practice_NPI")
-
-# Append resulting two new fields to main data
-PPL_df <- PPL_df %>% dplyr::bind_cols(dfSplitPracticeNPI)
-
-str(PPL_df)
-class(PPL_df)
-
-# 7 CHECK RESULTING NEW FIELDS IN DATA TABLE ------
-
-str(PPL_df[c(grep("Practice",names(PPL_df)))])
-
-# 4 WRITE RESULTING DATA TABLE -------------------------------------------
-# EXPORT SUB-TABLE
-
-OnlyPractices <- PPL_df %>% select(c("Medicaid.ID",
-                                     "Practice_Name"))
-
-head(OnlyPractices,5)
-
-resultingfile   <- "PopulationSamples//OnlyPractices.csv" 
-
-data.table::fwrite(OnlyPractices,resultingfile)
-
-Sys.time() - st
-
-############## END ------ 
