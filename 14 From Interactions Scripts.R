@@ -16,38 +16,55 @@ ls() # List variables in memory
 st <- Sys.time()
 
 # Load-multiple-packages-at-once
-required_packages <- c("dplyr", "ggplot2")
+required_packages <- c("dplyr", "ggplot2", "readxl")
 lapply(required_packages, library, character.only = TRUE)
 
 # 1 PARAMETERS CHANGE NAMES / UPDATE --------------------------------------------------
 
 # Paths # Location of Source files
-path            <- "PopulationSamples"       
+#path            <- "REPORT_INTERACTIONS_VH"       
+path            <- "REPORT_INTERACTIONS_VH//DATA_Interactions_by_CM"       
+
+# Paths
+# Location of Source files
+# path            <- "PopulationSamples"       
+#resultingfile   <- "data_merging_files//result_table.csv" 
+
+
+#resultingfile   <- "data_merging_files//result_table.csv" 
+
+# Location of resulting file ----
+# resultingfile   <- paste0("PopulationSamples//MergedFile", currPPL, ".csv")
 
 # 2 READ THE DOWNLOADED DATA EXCEL FILES ------------------------------------
 # Read sample files using full path and regex (known pattern)
 
-filenames_list <- list.files(path= path, full.names=TRUE, 
-                             pattern=paste0("^recaptable.*?.csv"))
-filenames_list
+list_files <- list.files(path= path, full.names=TRUE, 
+                             pattern=paste0("^Client.*?.xlsx"))
+list_files
 
-# Function: Read CSV file showing number of rows and columns
-
-fx_readfiles <- function(filename){
-  csvfile <- read.csv(filename)
-  print(paste("Number of records in ",filename," = ",nrow(csvfile),
-              " ; columns = ",length(csvfile),sep=""))
-  dfcsvfile <- data.frame(csvfile)
-  dfcsvfile 
-}
-
-# Apply defined function to list
-recaptable <- fx_readfiles(filenames_list)
-
-dim(recaptable)
-recaptable$PPL <- as.character(recaptable$PPL)
-head(recaptable)
- 
+# # * 2.2 Function: Read Excel files with equal structure --------
+# 
+# fx_readfiles <- function(filename){
+#   print(paste("Merging",filename,sep = " "))
+#   xlfile <- readxl::read_excel(filename)
+#   print(paste("Number of records in ",
+#               filename," = ",nrow(xlfile),
+#               " ; columns = ",length(xlfile),sep=""))
+#   dfXLfile <- data.frame(xlfile)
+#   dfXLfile 
+# }
+# 
+# read_excel(filenames_list[1])
+# 
+# 
+# # Apply defined function to list
+# recaptable <- fx_readfiles(filenames_list)
+# 
+# dim(recaptable)
+# recaptable$PPL <- as.character(recaptable$PPL)
+# head(recaptable)
+#  
 
 ########################################################################.
 ######################### INTERACTIONS PER WEEK
@@ -56,16 +73,16 @@ head(recaptable)
 
 # 0. PREPARE INSTALL CALL PACKAGES ---------------------------------------------------
 
-rm(list=ls())
-
-ls()
+# rm(list=ls())
+# 
+# ls()
 options(str = strOptions(strict.width = "cut"))
-st <- Sys.time()
+# st <- Sys.time()
 
 #devtools::session_info()
-.libPaths("C:/R_Libraries")
+# .libPaths("C:/R_Libraries")
 # .libPaths("C:/Users//Documents/R/win-library/4.0")
-.libPaths() ###  Check the default folder where packages are installed
+# .libPaths() ###  Check the default folder where packages are installed
 
 # Load-multiple-packages-at-once
 required_packages <- c("dplyr", "data.table", "lubridate", 
@@ -113,13 +130,14 @@ weekdays(lastdaycurrentweek)                 # Verification
 
 #C:\Users\\OneDrive - e\
 #DATA_Reports\REPORT_INTERACTIONS_VH\DATA_Interactions_by_CM
-setwd("C:/Users//")
-setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_Interactions_by_CM")
+# setwd("C:/Users//")
+# setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_Interactions_by_CM")
 
 ###setwd("./REPORT_INTERACTIONS_VH/DATASOURCE_INTERACTIONS_VH_CM")
 ###setwd("./DATA_Interactions_by_CM")
-getwd()
-list_files <- list.files(pattern='^Client_')
+# getwd()
+
+# list_files <- list.files(path=path, pattern='^Client_')
 # fileinfolist_files <- file.info(list.files(pattern='^Client_'))
 # fileinfolist_files
 # fileinfolist_files <- fileinfolist_files[substr(rownames(fileinfolist_files),1,1) != 0,]   # Delete datafiles with 0 rows
