@@ -1,488 +1,57 @@
 
 ###################################################################.
-# SCRIPT: ADD INDEX COLUMN TO DATA FRAME
-# USE CASE: To de-identify patients and not showing PHI
-###################################################################.
-
-# 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
-
-rm(list=ls()) # Delete all objects
-ls() # List variables in memory
-
-# options(header=T, sep=",", stringsAsFactors = FALSE, 
-#         str = strOptions(strict.width = "cut"), 
-#         readr.show_progress=FALSE)
-
-st <- Sys.time()
-
-# Load-multiple-packages-at-once
-required_packages <- c("dplyr", "ggplot2", "readxl")
-lapply(required_packages, library, character.only = TRUE)
-
-# 1 PARAMETERS CHANGE NAMES / UPDATE --------------------------------------------------
-
-# Paths # Location of Source files
-#path            <- "REPORT_INTERACTIONS_VH"       
-path            <- "REPORT_INTERACTIONS_VH//DATA_Interactions_by_CM"       
-
-# Paths
-# Location of Source files
-# path            <- "PopulationSamples"       
-#resultingfile   <- "data_merging_files//result_table.csv" 
-
-
-#resultingfile   <- "data_merging_files//result_table.csv" 
-
-# Location of resulting file ----
-# resultingfile   <- paste0("PopulationSamples//MergedFile", currPPL, ".csv")
-
-# 2 READ THE DOWNLOADED DATA EXCEL FILES ------------------------------------
-# Read sample files using full path and regex (known pattern)
-
-list_files <- list.files(path= path, full.names=TRUE, 
-                             pattern=paste0("^Client.*?.xlsx"))
-list_files
-
-# # * 2.2 Function: Read Excel files with equal structure --------
-# 
-# fx_readfiles <- function(filename){
-#   print(paste("Merging",filename,sep = " "))
-#   xlfile <- readxl::read_excel(filename)
-#   print(paste("Number of records in ",
-#               filename," = ",nrow(xlfile),
-#               " ; columns = ",length(xlfile),sep=""))
-#   dfXLfile <- data.frame(xlfile)
-#   dfXLfile 
-# }
-# 
-# read_excel(filenames_list[1])
-# 
-# 
-# # Apply defined function to list
-# recaptable <- fx_readfiles(filenames_list)
-# 
-# dim(recaptable)
-# recaptable$PPL <- as.character(recaptable$PPL)
-# head(recaptable)
-#  
-
+# SCRIPT: Interactions by date with de-identified pt info
+# Change Date formats. # Convert POSIXct, format to Date, format
+# EXAMPLE: INTERACTIONS by date
+# Algorithms in this script:
+# * 
 ########################################################################.
-######################### INTERACTIONS PER WEEK
-############### Interactions_WEEK_26_2021_20210630A_REVIEW_20210921.R
-########################################################################.
-
-# 0. PREPARE INSTALL CALL PACKAGES ---------------------------------------------------
-
-# rm(list=ls())
-# 
-# ls()
-options(str = strOptions(strict.width = "cut"))
-# st <- Sys.time()
-
-#devtools::session_info()
-# .libPaths("C:/R_Libraries")
-# .libPaths("C:/Users//Documents/R/win-library/4.0")
-# .libPaths() ###  Check the default folder where packages are installed
-
-# Load-multiple-packages-at-once
-required_packages <- c("dplyr", "data.table", "lubridate", 
-                       "tidyverse", "readxl")
-lapply(required_packages, FUN = 'library', character.only = TRUE)
-
-tibble::tibble(a = 1)
-
-# ######### FUNCTION APPEND EXCEL FILES
-# fx_append_excel_data <- function(DataXLSfiles){
-#   options(message = TRUE)
-#   mytypelist <- list() # Creation of empty list
-#   for(i in seq_along(DataXLSfiles)){   # Data in Three Groups or Files
-#     details <- file.info(DataXLSfiles)
-#     #details <- details[with(details, order(as.POSIXct(mtime), decreasing = TRUE)),]
-#     file.list <- rownames(details[1])  # Only name column[1]
-#     df.list <- lapply(file.list[i], read_excel)  ######### Convert list to Data frame 
-#     df.list[[1]]$ExcelFile <- file.list[i]               # R will recycle values
-#     #    df.list[[1]]$AddedCol <- rep(vectorvh[i],nrow(df.list[[1]])) # Not needed # Not needed
-#     print(paste(i," ","Number of records in file ",file.list[i]," = ",nrow(df.list[[1]])," ; columns = ",length(df.list[[1]]),sep=""))
-#     print(nrow(df.list[[i]]))
-#     if(nrow(df.list[[i]]) != 0){
-#       mytypelist <- append(mytypelist, df.list)
-#     } else {
-#       mytypelist <- mytypelist
-#     }
-#   }
-#   mytypelist
-# }
-
-##################################################################$
-# 1 LAST WEEK DATA -----------------------------------------------
-##################################################################$
-
-# * 1.1 Update Names Last Week -------------------------------------------------
-currentweek   <- "Week_2021_26" # Next to apply # UNTIL JUNE 30
-##########previousweek <- "Week_2021_04" # Next to apply
-mondaycurrentweek <- as.Date("2021-06-28")   # Monday
-weekdays(mondaycurrentweek)                  # Verification
-mondaycurrentweek + 6
-lastdaycurrentweek <- mondaycurrentweek + 6  # Sunday
-weekdays(lastdaycurrentweek)                 # Verification
-
-# * 1.2 Reading data excel files per Staff Member -------------------------------
-
-#C:\Users\\OneDrive - e\
-#DATA_Reports\REPORT_INTERACTIONS_VH\DATA_Interactions_by_CM
-# setwd("C:/Users//")
-# setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_Interactions_by_CM")
-
-###setwd("./REPORT_INTERACTIONS_VH/DATASOURCE_INTERACTIONS_VH_CM")
-###setwd("./DATA_Interactions_by_CM")
-# getwd()
-
-# list_files <- list.files(path=path, pattern='^Client_')
-# fileinfolist_files <- file.info(list.files(pattern='^Client_'))
-# fileinfolist_files
-# fileinfolist_files <- fileinfolist_files[substr(rownames(fileinfolist_files),1,1) != 0,]   # Delete datafiles with 0 rows
-
-head(list_files)
-class(list_files)
-list_files
-head(file.info(list_files))   # Details of Files
-length(list_files)
-seq_along(list_files)
-paste0("Elements in List (Care Managers): ",length(list_files))
-
-# fx_append_excel_data(list_files)
-
-##### Read Excel files - tibbles df.list
-df.list <- lapply(list_files, read_excel)
-seq_along(df.list)                    # Currently members in Staff
-df.list   # All tibbles
-
-# * 1.3 Number of Rows per Tibble  # Check out for Zeros -------------
-
-#mynrowslist <- list()
-# Method 1
-
-length(df.list[[30]])  # Columns one Tibble
-for( i in seq_along(df.list)){
-  print(paste0("Interactions for ", list_files[i], " / Rows: ",
-               nrow(df.list[[i]]), " / Cols: ", length(df.list[[i]])
-  )
-  )
-}
-
-##### Add file name as column per list
-for( i in seq_along(df.list)){
-  df.list[[i]]$ExcelFile <- rep(list_files[i],nrow(df.list[[i]])) # list_files[i]
-}
-str(df.list[[30]])
-
-###### To know if a specific field have the same class in all the tibbles
-for( i in seq_along(df.list)){
-  print(class(df.list[[i]]$`Date of Interaction`))
-}
-
-# df.list2930 <-  append(df.list[[29]], df.list[[30]])
-# df.list
-
-# * 1.4 EXCLUDE Tibbles with ZERO rows ----------
-
-fx_append_non_zero_data <- function(ListCMs){
-  options(message = TRUE)
-  mytypelist <- list() # Creation of empty list
-  for(i in seq_along(ListCMs)){   # Data in Three Groups or Files
-    if(nrow(ListCMs[[i]]) != 0){
-      mytypelist <- append(mytypelist, ListCMs[i])
-    } 
-    else {
-      mytypelist <- mytypelist
-    }
-  }
-  mytypelist
-}
-
-# for( i in seq_along(df.list)){
-#   a <- 0L
-#   nrow(df.list[[i]]) != 0
-#   a = a + 1
-# } else {
-#   a = a
-# }
-
-length(df.list)
-df.list <- fx_append_non_zero_data(df.list)
-length(df.list)
-
-# * 1.5 Bind rows from list and convert to data.frame ### Convert  --------
-dfWK <- data.frame(bind_rows(df.list))
-str(dfWK)
-dim(dfWK)
-head(dfWK,1)
-dim(dfWK)
-
-# 2 VERIFICATION OF CARE MANAGER NAMES BY SUBMITTED BY ----
-
-#head(distinct(dfWK[,c('ExcelFile','Submitted.By')]),15)
-nrow(data.frame(dfWK %>% group_by(ExcelFile, Submitted.By) %>% tally()))
-head(data.frame(dfWK %>% group_by(ExcelFile, Submitted.By) %>% tally()),16)
-tail(data.frame(dfWK %>% group_by(ExcelFile, Submitted.By) %>% tally()),16)
-
-str(dfWK)
-
-# 3 CHECK DATE OF INTERACTION DATE  -----
-# CONVERT TO DATE: Date of Interaction
-class(dfWK$Date.of.Interaction)
-dfWK$Date.of.Interaction <- lubridate::mdy(dfWK$Date.of.Interaction)
-class(dfWK$Date.of.Interaction)
-head(dfWK$Date.of.Interaction)
-str(dfWK$Date.of.Interaction,1)
-dfWK$Date.of.Interaction <- as_date(dfWK$Date.of.Interaction)
-class(dfWK$Date.of.Interaction)
-head(dfWK$Date.of.Interaction)
-table(dfWK$Date.of.Interaction)
-
-par("mar")
-par(mar=c(3,3,4,3))
-
-hist(dfWK$Date.of.Interaction, breaks = 150, col = 'lightblue')
-#dfWK %>% filter(Date.of.Interaction == "2021-01-18") # MLK day
-
-# Change of class Member Number
-dfWK$Member.Number <- as.double(dfWK$Member.Number)
-class(dfWK$Member.Number)
-
-str(dfWK)
-dim(dfWK)
-
-
-# 4 CHANGE DATE IF NECESSARY FOR FIX WRONG DATES (CHECK EXCEPTIONS) ----
-
-# * 4.1 Check Barplot BEFORE CHANGE IN DATES FOR HOLIDAYS ------
-
-tobarplot <- dfWK %>% 
-  group_by(Date.of.Interaction) %>% 
-  summarise(PerDay = length(Date.of.Interaction))
-tobarplot
-barplot(tobarplot$PerDay, 
-        xlab = 'Date.of.Interaction',
-        names.arg = tobarplot$Date.of.Interaction, col = 'gray')
-#dfWK <- dfWK %>% filter(Date.of.Interaction >= mondaycurrentweek &
-#                 Date.of.Interaction <= lastdaycurrentweek)
-dim(dfWK)
-
-table(dfWK$Date.of.Interaction, useNA = 'always')
-
-# Check Saturday Interaction
-dfWK[dfWK$Date.of.Interaction == '2021-06-12',]
-
-# SATURDAY TO FRIDAY
-dfWK$Date.of.Interaction[dfWK$Date.of.Interaction == '2021-06-12'] <- as_date('2021-06-11')
-
-# * 4.2 Check Barplot AFTER CHANGE IN DATES FOR HOLIDAYS ------
-
-table(dfWK$Date.of.Interaction, useNA = 'always')
-
-tobarplot <- dfWK %>% 
-  group_by(Date.of.Interaction) %>% 
-  summarise(PerDay = length(Date.of.Interaction))
-tobarplot
-barplot(tobarplot$PerDay, 
-        xlab = 'Date.of.Interaction',
-        names.arg = tobarplot$Date.of.Interaction, col = 'lightblue')
-
-# 5 SAVE FWRITE LAST INTERACTIONS --------------------------
-
-#setwd("D:/Information Technology/DATA_Reports/DATASOURCE_INTERACTIONS_VH_CM/ALL_PERIODS")
-setwd("C:/Users// -    ")
-setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_ALL_PERIODS")
-getwd()
-paste("DATA_FROM_",currentweek,".csv", sep = "") # <<<< NEW DATA FILE
-data.table::fwrite(dfWK, file=paste("DATA_FROM_",currentweek,".csv", sep = ""))
-
-str(dfWK)
-
-rm(dfWK)
-
-Sys.time() - st
-
-
-
-########################################################################.
-######################### INTERACTIONS ALL WEEKS
-########################################################################.
-
-#######################################################.
-# PARAMETERS: NONE. CONTROL+A TO EXECUTE CODE --------- 
-#######################################################.
 
 # 0. PREPARE INSTALL CALL PACKAGES ---------------------------------------------------
 
 rm(list=ls())
-
 ls()
 options(str = strOptions(strict.width = "cut"))
 st <- Sys.time()
-
-#devtools::session_info()
-.libPaths("C:/R_Libraries")
-# .libPaths("C:/Users//Documents/R/win-library/4.0")
-.libPaths() ###  Check the default folder where packages are installed
 
 # Load-multiple-packages-at-once
 required_packages <- c("dplyr", "data.table", 
                        "lubridate", "tidyverse", "readxl", "tidyr")
 lapply(required_packages, library, character.only = TRUE)
 
-tibble::tibble(a = 1)
-
-# ADD IMPORTANT
-# ROOT_4C_ONEDRIVE <- "C:/Users///4C Admin - DATA_Reports/"
-
-######### FUNCTION APPEND CSV FILES ALL PERIODS
-fx_csv_Interactions_Periods_data <- function(DataCSVfiles){
-  options(message = TRUE)
-  mytypelist <- list() # Creation of empty list
-  for(i in seq_along(DataCSVfiles)){   # Data in Three Groups or Files
-    details <- file.info(DataCSVfiles)
-    #details <- details[with(details, order(as.POSIXct(mtime), decreasing = TRUE)),]
-    file.list <- rownames(details[1])  # Only name column[1]
-    df.list <- lapply(file.list[i], read_csv)  ######### Convert list to Data frame
-    df.list[[1]]$ExcelFile2 <- file.list[i]               # R will recycle values
-    # df.list[[1]]$AddedCol <- rep(vectorvh[i],nrow(df.list[[1]])) # Not needed # Not needed
-    print(paste(i," ","Number of records in file ",file.list[i]," = ",nrow(df.list[[1]])," ; columns = ",length(df.list[[1]]),sep=""))
-    #print(nrow(df.list[1]))
-    mytypelist <- append(mytypelist, df.list)
-  }
-  mytypelist
-}
-
+# Functions ----- 
 # TABLES USENA = 'always'
 tablex <- function(x){print(table(x, useNA = 'always'))}
 tablexy <- function(x,y){print(table(x,y, useNA = 'always'))}
 
-#####################################################################o
-# 1 APPEND ALL PERIODS -----------------------------------------------
-#####################################################################o
+#####################################################################.
+# 1 read data - all periods -------
+#####################################################################.
 
-# * 1.1 Reading data excel files per Staff Member -------------------------------
-setwd("C:/Users//OneDr")
-setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_ALL_PERIODS")
+# Paths: Location of Source files
+path            <- "PopulationSamples"       
 
-getwd()
+filenames_list <- list.files(path= path, full.names=TRUE, 
+                             pattern=paste0("^interactions.*?.xlsx"))
+filenames_list
 
-list_files <- list.files(pattern='^DATA_FROM_Week')
-list_files
-class(list_files)
-seq_along(list_files)  # Elements on a List
-
-# * 1.2 Read csv files - tibbles Bind Rows ALL Periods -------------
-
-df.list <- fx_csv_Interactions_Periods_data(list_files)
-
-# df.list <- lapply(list_files, read_csv)
-#dfRecentInteractions$Date.of.Interaction <- lubridate::mdy(df.list[[13]][1])
-#dfRecentInteractions$Date.of.Interaction <- as_date(df.list[[13]][1]))
-
-#tail(lapply(list_files, read_csv),10)
-seq_along(df.list)   # Elements Tibbles
-
-# ##### To know if a specific field have the same class in all the tibbles (Periods)
-# for( i in seq_along(df.list)){
-#   print(paste0(list_files[i], class(df.list[[i]]$`Date.of.Interaction`)))
-# }
-
-#df.list[[9]][1]$`Date.of.Interaction`
-
-###### Bind rows from list and convert to data.frame
-### Convert list (tibbles) to Data frame 
-dfINT <- data.frame(bind_rows(df.list))
-
-# rlang::last_error()
-# dfINT$Member.Number <- as.character(dfINT$Member.Number)
-# dfINT$Date.of.Interaction
-str(dfINT)
-dim(dfINT)
-
-# # UNIQUE DOB FORMAT - D2021-06-01
-# dfINT$DOB
-# dfINT$DOB <- paste0("A", mdy(dfINT$DOB))
-# dfINT$DOB
-
-#dfINT$DOB
-#tablex(nchar(dfINT$DOB))
-
-# dfINT$DOB <- as.Date(mdy(dfINT$DOB, format='%m/%d/%Y'))
-# tablex(is.na(dfINT$DOB))
-# dfINT$DOB <- mdy(dfINT$DOB, format='%m/%d/%Y')
-# tablex(nchar(dfINT$DOB))
-# dfINT[nchar(dfINT$DOB) == 1,]
-# dfINT$DOB
-
-# https://stackoverflow.com/questions/13259434/r-date-format-with-months-and-days-of-two-digits
-# year <- c(2008:2012)
-# mth <- c(1:5)  
-# day <- c(1:5) 
-# A <- data.frame(cbind(year,mth,day)) 
-# A
-# date.ch <- as.character(with(A, paste(year, mth, day, sep="-")))
-# date.ch
-# date.n <- as.numeric(with(A, paste(year, mth, day, sep="")))
-# date.ch
-# format.Date(paste(A$Year, A$mth, A$day, sep = "-"), '%Y%m%d')
-
-# * 1.3 Change Member Number Format  ----------------------------------
-
-class(dfINT$Member.Number)
-head(dfINT$Member.Number)
-dfINT$Member.Number <- paste0("B",sprintf("%07d", dfINT$Member.Number))
-tablex(nchar(dfINT$Member.Number))
-
-#dfINT %>% filter(grep('NA', dfINT$Member.Number, value = T))
-#dfINT %>% filter(Member.Number == 'B     NA')
-
-table(nchar(dfINT$Member.Number), useNA = 'always')
-tablex(nchar(dfINT$Member.Number))
-
-# * Member Number
-# dfINT %>% filter(nchar(Member.Number) == 4)
-# dfINT %>% filter(is.na(nchar(Member.Number)))
-# PENDING COMPLETE MEMBER NUMBER AND MEDICAID ID FOR NA PATIENTS
-# dfINT$Member.Number <- sprintf("%07d", dfINT$Member.Number)
-#dfINT$Member.Number
-
-
-
-# * 2.2 Recap All Interactions per Month ----------------------------------
+dfINT <- data.frame(readxl::read_excel(filenames_list))
 
 dim(dfINT)
 
-#dfINT <- dfINT %>% filter(Date.of.Interaction >= "2020-01-06")
+# * 1.1 Recap per Year - Month with format.Date --------------------
 
-table(dfINT$Outgoing.Contact.Result, useNA = 'ifany')
+table(dfINT$Outgoing.Contact.Result, useNA = 'ifany') # MOVE
 
 #table(paste(lubridate::year(dfINT$Date.of.Interaction),
 #            text(lubridate::month(dfINT$Date.of.Interaction),"00"), sep="/"))
 
-# Quick Recap by Months
 #mdy(dfINT$Date.of.Interaction)
-tablex(nchar(dfINT$Date.of.Interaction))
-# dfINT %>% filter(nchar(Date.of.Interaction) == 9) %>% select(ExcelFile2)
-# chhch <- read.csv("DATA_FROM_Week_2020_37.csv")
-# chhch$Date.of.Interaction <- mdy(chhch$Date.of.Interaction)
-# fwrite(chhch, "DATA_FROM_Week_2020_37.csv")
+#tablex(nchar(dfINT$Date.of.Interaction))
+#dfINT %>% filter(nchar(Date.of.Interaction) == 8) %>% select(Date.of.Interaction)
 
-# INTERACTIONS BY MONTHS
 table(paste(format.Date(dfINT$Date.of.Interaction, "%Y"),
             format.Date(dfINT$Date.of.Interaction, "%m"), sep="/"))
-
-# #####################################################################o
-# # DELETE 2 CHANGE MAX DATE FOR SLA METRIC
-# #####################################################################o
-# 
-# # dim(dfINT)
-# # max(dfINT$Date.of.Interaction)
-# # # LAST DAY
-# # dfINT <- dfINT[dfINT$Date.of.Interaction <= "2021-04-30",]
-# # dim(dfINT)
 
 #####################################################################o
 # 2 CHECK OF DUPLICATES ---------------------------------------------

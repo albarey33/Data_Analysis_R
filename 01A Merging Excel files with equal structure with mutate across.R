@@ -32,10 +32,12 @@ currPPL <- "202106"     # Update
 # Paths
 # Location of Source files
 path            <- "PopulationSamples"       
-#resultingfile   <- "data_merging_files//result_table.csv" 
+#path <- "PopulationSamples//DATA_Interactions_by_CM//" # if sub-folder
+
 
 # Location of resulting file ----
 resultingfile   <- paste0("PopulationSamples//MergedFile", currPPL, ".csv")
+#resultingfile   <- "data_merging_files//result_table.csv" 
 
 # 2 READ THE DOWNLOADED DATA EXCEL FILES ------------------------------------
 # Read sample files using full path and regex (known pattern)

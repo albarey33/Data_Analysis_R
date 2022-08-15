@@ -2,10 +2,10 @@
 #########################################################################.
 ##################### CARE MANAGEMENT - MONTHLY ENROLLMENT  #############.
 # SCRIPT / FUNCTION TO MERGE CSV FILES SHOWING ROWS AND COLUMNS PER FILE
-# USE CASE: TO BUILD THE MONTHLY ENROLLMENT LIST DATA CSV FILE 
+# USE CASE: To collect data from many csv files into one csv file
 # FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
-# Data Source: PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
-# FREQUENCY: Execute this script after enrollment ONCE A MONTH
+# Data Source: CSV files
+# Example Algorithms: Add field with the source data file name
 ###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -39,7 +39,8 @@ fx_append_csvfiles <- function(list_of_csv_files, PPLini, PPLfin){
                 nrow(df.list[[1]])," ; columns = ",length(df.list[[1]]),sep=""))
     mytypelist <- append(mytypelist, df.list)
   }
-  df <- data.frame(dplyr::bind_rows(mytypelist))
+  mytypelist
+
 }
 
 # 3 READ THE DOWNLOADED DATA CSV FILES ------------------------------------
@@ -53,17 +54,20 @@ filenames_list
 locPPL <- regexpr(currPPL,filenames_list[1])[1]  # Locate pattern in string
 
 # Apply function
-df_PPL_PHD <- fx_append_csvfiles(filenames_list, locPPL, locPPL+5)
+tibbles <- fx_append_csvfiles(filenames_list, locPPL, locPPL+5)
 
-#head(df_PPL_PHD,1)
-dim(df_PPL_PHD)
-#str(df_PPL_PHD,1)
+# 4 ADD FIELD WITH THE DATA SOURCE FILE NAME -------------
+# Extract name from paths: basename
 
-# 4 WRITE RESULTING DATA TABLE -------------------------------------------
-# 
-# Resulting file same as Procedure "01 Merging Excel files with equal structure.R"
+for( i in seq_along(filenames_list)){
+  tibbles[[i]]$FileName <- basename(filenames_list[i]) # list_files[i]
+  }
+
+# 5 WRITE RESULTING DATA TABLE -------------------------------------------
+
+df <- data.frame(dplyr::bind_rows(tibbles))
+str(df)
 
 Sys.time() - st
 
 #################### END ------ 
-

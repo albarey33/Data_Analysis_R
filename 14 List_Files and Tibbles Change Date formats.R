@@ -1,9 +1,10 @@
 
 ###################################################################.
 # SCRIPT: DATA PRE-PROCESSING EXTRACTING MULTIPLE FILES, CHECKING RECORDS
+# Extract name from paths: basename
 # ADD COLUMNS WITH THE DATA FILE NAME
 # Change Date formats. # Convert POSIXct, format to Date, format
-# Interactions_WEEK_26_2021_20210630A_REVIEW_20210921.R
+# Example: Interactions_WEEK_26_2021_20210630A_REVIEW_20210921.R
 ########################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -163,7 +164,6 @@ barplot(tobarplot$PerDay,
 dim(dfWK)
 
 table(dfWK$Date.of.Interaction, useNA = 'always')
-
 
 # 5 SAVE FWRITE LAST INTERACTIONS --------------------------
 
