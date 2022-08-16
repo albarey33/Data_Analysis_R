@@ -40,7 +40,6 @@ dfINT <- data.frame(readxl::read_excel(filenames_list))
 dim(dfINT)
 str(dfINT)
 
-
 # 3 CONVERT POSIXct, format to Date, format  -----
 
 dfINT[] <- lapply(dfINT, function(x) {
@@ -112,6 +111,7 @@ dfINT$Mondays <- dfINT$Date.of.Interaction - dfINT$WDay + 1
 
 # tail(table(dfINT$Mondays,wday(dfINT$Date.of.Interaction)-1),10)
 # tail(table(dfINT$Mondays,dfINT$WDay),10)
+head(dfINT,1)
 
 # * 4.3 Year2 and Week Number (Based on Mondays) ------------------------------------------
 
@@ -128,7 +128,6 @@ dfINT$WDay2 <- paste(dfINT$WDay, dfINT$WeekDay, sep="- ")
 
 tail(table(paste(dfINT$Week,dfINT$Mondays,sep=" - "),dfINT$WDay2),10) # ALL Interactions (w UTR)
 table(dfINT$WDay2)
-
 
 # * 4.3 Filter data by weeks --------------------------
 
@@ -170,17 +169,13 @@ barplot(dfsuccessint$n, xlab = 'Week',
         ylab = 'No UTR Int', col='lightblue')
 
 #####################################################################$
-# 8 UNIQUE PATIENTS --------------------------------------------------
+# 8 UNIQUE PATIENTS ON EACH WEEK --------------------------
 #####################################################################$
+# NOTE: GROUP BY NAME/DOB
 
-# NOTE: BETTER DON'T GROUP BY AGE CAUSING EXTRA UNIQUE PATIENTS
-# BEFORE AUGUST 17, 2020 (WEEK 32)
 # * 8.1 EXCLUDING OUTGOING CONTACT RESULTS IN BLANK --------
 unique_wo_incoming <- dfINT %>% 
-  #  filter(Date.of.Interaction < "2020-08-17") %>%  # BEFORE 2020-08-17 !!!!!
   filter(Outgoing.Contact.Result == 'Contact Successful') %>% 
-           #Mode.PCI == 'Yes' &                             # Only Patient Centered Interactions
-           #Prim.Part.PCI == 'Yes') %>%                     # Only Patient Centered Interactions
   select(Week, Mondays, Client, DOB) %>% 
   group_by(Week, Mondays) %>% 
   summarise(Unique_Patients = n_distinct(Client, DOB))  #   
@@ -190,56 +185,14 @@ barplot(unique_wo_incoming$Unique_Patients, xlab = 'Week',
         ylab = 'No Incoming', col='brown')
 
 #select(Week, Mondays, Unique_Patients)
-dim(unique_wo_incoming)
 tail(unique_wo_incoming, 8)
-
-# * 8.2 UNIQUE PTS WITH INCOMING CONTACT SUCCESSFUL OPTION 7 --------
-
-unique_w_incoming_OLD <- dfINT %>% 
-  filter(Date.of.Interaction >= "2020-01-06") %>%                # "2020-01-06"
-  filter(Outgoing.Contact.Result %in% 
-           c('Contact Successful', 'Contact result in Blank') & # |        ### ) %>% #  & #) %>% # | # )  # | 
-           Mode != 'Fax'  &       # Mode.PCI %in% c('Yes', 'Other_PtInt') &   # %>%   # & # #&                             # Only Patient Centered Interactions
-           Prim.Part.PCI == 'Yes') %>%                      # Only Patient Centered Interactions
-  select(Week, Mondays, Client, DOB) %>% group_by(Week, Mondays) %>% 
-  summarise(Unique_Incoming_Patients = n_distinct(Client, DOB))  #   
-unique_w_incoming_OLD <- data.frame(unique_w_incoming_OLD)
-tail(unique_w_incoming_OLD, 5)
-barplot(unique_w_incoming_OLD$Unique_Incoming_Patients, xlab = 'Week', 
-        ylab = 'w Incoming OLD', col='gray')
-
-# * 8.3 UNIQUE PTS BY PENETRATION RATE --------
-
-unique_w_incoming <- dfINT %>% 
-  filter(Date.of.Interaction >= "2020-01-06") %>%                # "2020-01-06"
-  filter(Outgoing.Contact.Result %in% 
-           c('Contact Successful', 'Contact result in Blank') & # |        ### ) %>% #  & #) %>% # | # )  # | 
-           !Mode %in% c('Fax','Mail')  &       # Mode.PCI %in% c('Yes', 'Other_PtInt') &   # %>%   # & # #&                             # Only Patient Centered Interactions
-           Prim.Part.PCI == 'Yes') %>%                      # Only Patient Centered Interactions
-  select(Week, Mondays, Client, DOB) %>% group_by(Week, Mondays) %>% 
-  summarise(Unique_Incoming_Patients = n_distinct(Client, DOB))  #   
-unique_w_incoming <- data.frame(unique_w_incoming)
-tail(unique_w_incoming, 5)
-barplot(unique_w_incoming$Unique_Incoming_Patients, xlab = 'Week', 
-        ylab = 'w Incoming CURRENT', col='lightgreen')
-
-# ADDED 5/4/2021 - VERIFICATION USING INTERACTION CLASSIFICATION
-meltedPCInt <- melt(data.table(dfINT[!is.na(dfINT$Last52Weeks),]),
-                    id.vars = c("Week", "Member.Number"),
-                    measure.vars = c("Interaction_Classification"))
-unqver2 <- dcast(meltedPCInt, Week + Member.Number ~ value, fun.agg = length, value.var = "value")
-names(unqver2) <- c('Week', 'MbNb', 'PCI', 'OtherPt', 'OtherInt', 'UTR')
-unqver2 <- unqver2[rowSums(unqver2[,3:4]) >0,] # Total Pt Int > 0
-tail(unqver2[,1:2] %>% group_by(Week) %>% summarise(Unq = n_distinct(MbNb)))
 
 #####################################################################$
 # 9 COUNT OF WORKING DAYS PER WEEK (FIVE DAYS MINUS HOLIDAYS)  ---------------
 #####################################################################$
 
 days_per_week <- dfINT %>% 
-  filter(Outgoing.Contact.Result == 'Contact Successful' & 
-           Mode.PCI == 'Yes' &                             # Only Patient Centered Interactions
-           Prim.Part.PCI == 'Yes') %>%                     # Only Patient Centered Interactions
+  filter(Outgoing.Contact.Result == 'Contact Successful') %>% 
   group_by(Week, Mondays,WDay2) %>% 
   summarise(sum_mins = sum(Duration))
 days_per_week <- data.table(days_per_week)
@@ -267,7 +220,7 @@ dfINT %>% group_by(daysweek) %>% tally()
 # unique_w_incoming
 unique_pts <- dplyr::inner_join(unique_wo_incoming,days_per_week,by="Week")
 #unique_pts
-unique_pts <- dplyr::inner_join(unique_pts,unique_w_incoming,by=c("Mondays", "Week"))
+#unique_pts <- dplyr::inner_join(unique_pts,unique_w_incoming,by=c("Mondays", "Week"))
 unique_pts
 dim(unique_pts)
 str(unique_pts)
@@ -283,11 +236,13 @@ dim(unique_pts)
 #####################################################################$
 str(dfINT)
 ############ Delete ExcelFile column
-dfINT <- dfINT %>% select(-c("Notes", "ExcelFile", "ExcelFile2"))
+dfINT <- dfINT %>% select(-c("ExcelFile", "ExcelFile2"))
+#dfINT <- dfINT %>% select(-c("Notes", "ExcelFile", "ExcelFile2"))
 # dfINT <- dfINT %>% filter(Week != max(dfINT$Week)) 
 
 #####################################################################$
 # 12 REASON FOR SERVICE ONLY INTERACTIONS WITHOUT UTR ----------------
+# Split a string of values into multiple columns per value
 #####################################################################$
 
 ### Data WITHOUT UTR
