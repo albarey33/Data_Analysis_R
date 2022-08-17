@@ -58,7 +58,12 @@ PPL_df <- fx_readfiles(filenames_list)
 class(PPL_df)
 dim(PPL_df)
 
+# 3 Sequence Generation: AUTOMATIC INDEX BASED ON ROWS ---------
+
+PPL_df$Sequence <- seq.int(nrow(PPL_df))   # Add an ID Index column
  
+table(seq.int(nrow(PPL_df)) == 1:nrow(PPL_df))
+
 # 3 INDEX UNIQUE ROWS ENROLLMENT  E0000000 ---------
 
 PPL_df$Index <- paste0('E',stringr::str_pad(1:nrow(PPL_df), 7, side="left", pad="0"))
