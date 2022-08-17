@@ -137,13 +137,15 @@ dfINT$WDay2 <- paste(dfINT$WDay, dfINT$WeekDay, sep="- ")
 
 # ALL Interactions - Convert table to dataframe
 table_weekdays <- table(dfINT$Week,dfINT$WDay2)
-table_weekdays <- as.matrix.data.frame(table_weekdays, 
+
+df_weekdays <- as.matrix.data.frame(table_weekdays, 
                                        rownames.force = T)
-table_weekdays <- data.frame(table_weekdays)
 
-names(table_weekdays) <- colnames(table(dfINT$Week,dfINT$WDay2))
+colnames(df_weekdays) <- colnames(table_weekdays)
 
-tail(table_weekdays,10)
+df_weekdays <- dplyr::bind_cols(Week = rownames(table_weekdays),df_weekdays)
+
+tail(df_weekdays,10)
 
 # * 5.3 Filter data Last 16 weeks - pull() %in% --------------------
 
@@ -218,8 +220,10 @@ recapweeks <- recapweeks %>%
 tail(recapweeks,10)
 
 # 11 WITH WEEKDAYS --------------
-table_weekdays
-recapweeks <- cbind(recapweeks, table_weekdays)
+
+#recapweeks <- cbind(recapweeks, df_weekdays)
+recapweeks <- recapweeks %>% 
+  dplyr::inner_join(df_weekdays,by="Week")
 
 tail(recapweeks,10)
 
