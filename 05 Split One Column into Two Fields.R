@@ -51,6 +51,10 @@ str(PPL_df[c(grep("Practice",names(PPL_df)))])
 
 # 5 SPLIT COLUMN PRACTICE + NPI USING DIVIDER ": "  -------
 
+#split(NOMIDNA$Client, ", ")
+# str_split_fixed(NOMIDNA$Client, ", ", n = 2)[,1]
+# str_split_fixed(NOMIDNA$Client, ", ", n = 2)[,2]
+
 head(str_split_fixed(PPL_df$Practice...NPI, ": ", n = 2),5) # Field to split
 
 dfSplitPracticeNPI <- str_split_fixed(PPL_df$Practice...NPI, ": ", n = 2) 
