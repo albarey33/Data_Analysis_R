@@ -88,5 +88,9 @@ data.table::fwrite(PPL_df,resultingfile)
 
 Sys.time() - st
 
+# NOTES: 
+#CM_List <- read_excel("t_VH_Assigned_CM_in_Care_Team.xlsm", 
+#                      sheet='CC4C_OB_CMs', range="K7:K60")
+
 ############## END ------ 
 

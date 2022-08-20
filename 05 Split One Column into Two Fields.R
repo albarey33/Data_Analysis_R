@@ -49,7 +49,7 @@ dim(PPL_df)
 # Structure of Fields with "Practice" in their names
 str(PPL_df[c(grep("Practice",names(PPL_df)))])
 
-# 5 SPLIT COLUMN PRACTICE + NPI USING DIVIDER ": "  -------
+# 3 SPLIT COLUMN PRACTICE + NPI USING DIVIDER ": "  -------
 
 #split(NOMIDNA$Client, ", ")
 # str_split_fixed(NOMIDNA$Client, ", ", n = 2)[,1]
@@ -72,11 +72,11 @@ PPL_df <- PPL_df %>% dplyr::bind_cols(dfSplitPracticeNPI)
 str(PPL_df)
 class(PPL_df)
 
-# 7 CHECK RESULTING NEW FIELDS IN DATA TABLE ------
+# 4 CHECK RESULTING NEW FIELDS IN DATA TABLE ------
 
 str(PPL_df[c(grep("Practice",names(PPL_df)))])
 
-# 4 WRITE RESULTING DATA TABLE -------------------------------------------
+# 5 WRITE RESULTING DATA TABLE -------------------------------------------
 # EXPORT SUB-TABLE
 
 OnlyPractices <- PPL_df %>% select(c("Medicaid.ID",

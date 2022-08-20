@@ -2,7 +2,7 @@
 #######################################################################################.
 ##################### CARE MANAGEMENT - MONTHLY ENROLLMENT  ##########################.
 # SCRIPT / FUNCTION TO HIGHLIGHT DISCREPANCIES SO THAT THEY CAN BE DELETE OR RENAMED
-# USE CASE: ARRANGE FILES WITH DIFFERENT STRUCTURE BEFORE MERGE THEM
+# USE CASE: ARRANGE AND RENAME FIELDS WITH DIFFERENT STRUCTURE BEFORE MERGE THEM
 # FOR DATA ANALYSIS OF CARE MANAGEMENT RESULTS
 # Data Source: PATIENT HEALTH DASHBOARD (PHD) - POPULATION SUMMARY
 # FREQUENCY: Execute this script after enrollment ONCE A MONTH
@@ -19,8 +19,6 @@ required_packages <- c("dplyr")
 lapply(required_packages, library, character.only = TRUE)
 
 # 1 PARAMETERS CHANGE NAMES / UPDATE --------------------------------------------------
-
-#currPPL <- "202106"     # Update 
 
 # Paths # Location of Source files
 path            <- "PopulationSamples"       
@@ -90,5 +88,10 @@ fx_comparison_two_DFs_Fields(tibble_1mo, tibble_2mo)
 # Result zero fields with discrepancies. The fields are ready to merge correctly
 
 bind_rows(tibble_1mo, tibble_2mo)
+
+# Other option to rename fields using data.table
+# Three_Enroll <- data.table::setnames(tibble_1mo, 
+#                                      old=c("Current.MID","Patient.Name"),
+#                                      new=c("Medicaid.ID","Name"))
 
 # END -------

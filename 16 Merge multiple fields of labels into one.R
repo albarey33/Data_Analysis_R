@@ -1,9 +1,7 @@
 
 ###################################################################.
-######### PURPOSE: CONDITIONS / BH CONDITIONS LABEL PER PATIENT
-# Example: "For Patient_001 - > COPD, Diabetes, Hypertension"
-# Execute this script after enrollment ONCE A MONTH
-# This report contains Medical Conditions information
+#### MERGE MULTIPLE FIELDS OF LABELS INTO ONE
+# Example: Conditions / BH conditions into one label per patient
 ###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -33,13 +31,11 @@ currPPL <- "202106"     # Update
 
 path            <- "PopulationSamples"   
 inputfile   <- paste0("Enrollment_PPL_", currPPL, ".csv")
-outputfile  <- paste0("Monthly_Enrollment//MedicalConditions_", currPPL, ".csv")
 
 # 2 FUNCTIONS -------------------
 
 # Function Convert Data to Money values without commas
 tablex       <- function(x){print(table(x, useNA = 'always'))}
-tablexy      <- function(x,y){print(table(x,y, useNA = 'always'))}
 
 # 3 READ THE GENERATED CSV DATA FILE ----------
 
@@ -58,11 +54,9 @@ dim(AllEnrollees)
 # in order to execute the function
 
 str(AllEnrollees)
-
-str(AllEnrollees)
 dim(AllEnrollees)
 
-# 5 DEFINE COLUMN NAMES GROUPS DEMOGRAPHICS MEDICAL BH CONDITIONS ------
+# 6 DEFINE COLUMN NAMES GROUPS DEMOGRAPHICS MEDICAL BH CONDITIONS ------
 
 # DEMOGRAPHICS
 demographics <- c("Medicaid.ID",  "Name", "DOB",
@@ -71,13 +65,12 @@ demographics <- c("Medicaid.ID",  "Name", "DOB",
 demographics %in% names(AllEnrollees)
 
 #### VERIFY: IF MISSING
+# Check vector of values in another vector
 demographics[!demographics %in% names(AllEnrollees)]#### MISSING 
 
 # SPECIAL CONDITIONS
 special_conditions <- c(  "Dual", "ABD" )
               #"Foster_Care_Indicator", #"Palliative_Care_Indicator"
-
-special_conditions %in% names(AllEnrollees)
 
 #### VERIFY: IF MISSING
 special_conditions[!special_conditions %in%  names(AllEnrollees)]   
@@ -105,6 +98,7 @@ clinical_conditions <- c(
   "Sickle.Cell"
   # "Three.or.More.Chronic.Conditions"
 )
+
 clinical_conditions[clinical_conditions %in% names(AllEnrollees)]
 
 #### VERIFY: IF MISSING
@@ -138,7 +132,7 @@ BH_Conditions[BH_Conditions %in% names(AllEnrollees)]
 BH_Conditions[!BH_Conditions %in%  names(AllEnrollees)] #### MISSING
 dim(AllEnrollees)
 
-# REORDER BY GROUPS
+# 7 REORDER BY GROUPS -------------
 AllEnrollees <- AllEnrollees %>% select(c(all_of(demographics), 
                                           all_of(special_conditions), 
                                           all_of(clinical_conditions), 
@@ -146,20 +140,27 @@ AllEnrollees <- AllEnrollees %>% select(c(all_of(demographics),
 
 head(AllEnrollees)
 
-as.vector(t(names(AllEnrollees)))
-paste(t(names(AllEnrollees)), collapse = ", ")
+# Vector of names
+as.vector(names(AllEnrollees))
+paste(names(AllEnrollees), collapse = ", ")
+class(t(names(AllEnrollees))) # t() Matrix Transpose
 
-# 6 SELECT FIELDS THAT WILL CHANGE YES BY FIELD NAME ------
+
+# 7 FIELD NAMES AS VALUES ------
+
+# * 7.1 Select fields that will change YES by field name  -----
 
 ChangeName <- c(special_conditions,clinical_conditions,BH_Conditions)
 ChangeName   # ALL FIELDS THAT WILL CHANGE YES BY FIELD NAME
-ChangeName %in% names(AllEnrollees)
-head(AllEnrollees[,ChangeName],5)
+tablex(ChangeName %in% names(AllEnrollees))
+head(AllEnrollees[,ChangeName],3)
 
 # Vector_from_ifelse: Names that replace the original "Yes" value
 # Necessary that column names match with the replacement names
 # in order to execute the function
 # ONLY FOR VERIFICATION
+
+# * 7.2 Verification - Match names -------------
 
 Verification_from_ifelse <- c("Dual", "ABD", "Asthma", "Cancer", "CVA.Stroke",
                               "Chr.GastroInt.Dis", "Chr.Kidney.Dis", "Chronic.Pain",
@@ -176,24 +177,34 @@ Verification_from_ifelse <- c("Dual", "ABD", "Asthma", "Cancer", "CVA.Stroke",
 ChangeName[!ChangeName %in% Verification_from_ifelse]
 Verification_from_ifelse %in%  ChangeName
 
-# 7 REPLACE YES / NO VALUES BY THE CONDITION NAME OR BLANK ------
+# * 7.3 Replace YES / NO values by the condition name or blank ------
 # "Yes" -> Condition name
 # "No  -> Blank
 
-AllEnrollees[,"PTSD"]
+tablex(ifelse(AllEnrollees[,"PTSD"]=="Yes",1,0))
 
-for(i in seq_along(ChangeName)){
-  AllEnrollees[,ChangeName][i]  <- ifelse(AllEnrollees[,ChangeName][i]  == "Yes",
-                                          ChangeName[i],"")
-}
+fxonlyfieldnamestochangevalues <- function(df){
+  for(ii in seq_along(df)){
+    df[,ii] <- ifelse(df[,ii]  == "Yes", names(df)[ii],"")
+    #print(df[,ii])
+  }
+  df
+  }
 
-dim(AllEnrollees)
-head(AllEnrollees, 20)
+AllEnrollees[,c(ChangeName)] <- fxonlyfieldnamestochangevalues(AllEnrollees[,c(ChangeName)])
+
+tablex(AllEnrollees$PTSD) # Verification
+
+# for(i in seq_along(ChangeName)){
+#   AllEnrollees[,ChangeName][i]  <- ifelse(AllEnrollees[,ChangeName][i]  == "Yes",
+#                                    ChangeName[i],"")}
+
 str(AllEnrollees)
 class(AllEnrollees)
 
 
-# 8 PASTE COLLAPSE CONDITIONS ---------------------------------------------
+# 8 PASTE COLLAPSE CONDITIONS BY GROUPS ------------------------------------
+
 # Paste all Conditions Columns into One  - Columns 49, 50
 AllEnrollees$Clinical_Dxs <- apply( AllEnrollees[,clinical_conditions],1,paste,collapse = ",")
 AllEnrollees$BH_Dxs       <- apply( AllEnrollees[,BH_Conditions]      ,1,paste,collapse = ",")
@@ -201,7 +212,7 @@ AllEnrollees$All_Conditions <- apply( AllEnrollees[,c(clinical_conditions, BH_Co
 AllEnrollees$All_Conditions
 dim(AllEnrollees)
 str(AllEnrollees)
-table(AllEnrollees$Any.MH, useNA = 'always')
+tablex(AllEnrollees$Any.MH)
 
 
 # 9 REGEX ELIMINATE CONSECUTIVE COMMAS -----------------------------
@@ -235,17 +246,16 @@ str(AllEnrollees)
 # 10 CHANGE VALUES GENDER FIELD ----------
 AllEnrollees$Gender[ AllEnrollees$Gender == "FEMALE" ] <- "F"
 AllEnrollees$Gender[ AllEnrollees$Gender == "MALE" ] <- "M"
-AllEnrollees
+
 str(data.table(AllEnrollees))
 
-# TEST
-
-t(AllEnrollees[sample(1:nrow(AllEnrollees),1),])
+# RANDOM TEST
+t(AllEnrollees[sample(nrow(AllEnrollees),1),])
 
 # 11 WRITE DATA TABLE ------------------------------------------------------
 
-outputfile
-fwrite(AllEnrollees, outputfile)
+#outputfile
+#fwrite(AllEnrollees, outputfile)
 
 ls()
 Sys.time() - st

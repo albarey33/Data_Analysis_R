@@ -90,6 +90,10 @@ tchanges <- comparison %>%
 
 tchanges
 
+### Check use of dplyr::setdiff(x, y, ) 
+### Rows that appear in x but not y. 
+### PtEngDsh <- dplyr::setdiff(PtEngDsh,CCNCNewPrev)  
+
 # 7 IDENTIFY PATIENTS WHO CHANGED PRACTICES (ONE EXAMPLE) -----
 
 comparison %>% 

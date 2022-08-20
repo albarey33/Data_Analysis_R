@@ -177,6 +177,13 @@ str(PPL_df)
 
 str(PPL_df %>% select(c("Dual", RangeConditions)))
 
+
+                                
+# Change from Family, First to FIRST FAMILY names ---------------
+# PriPro_Cx$Primary.Care.Manager <- toupper(sub("(\\w+),\\s(\\w+)","\\2 \\1", PriPro_Cx$Primary.Care.Manager))
+
+
+
 # 6 WRITE RESULTING DATA TABLE -------------------------------------------
 
 # fwrite(PPL_df,resultingfile)
