@@ -1,7 +1,7 @@
 
-#########################################################################.
+########################################################################.
 ##################### STATISTICAL ANALYSIS  #############################.
-# SCRIPT: 
+# SCRIPT: t-test T-TEST t.test()
 ###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -76,7 +76,7 @@ ggplot(combo, aes(Total_Sales, fill = e)) +
 # Density plot
 
 ggplot(combo, aes(Total_Sales, fill = e)) + 
-  geom_density(alpha = 0.2)
+  geom_density(alpha = 0.2) + geom_vline (xintercept = 200, size=0.5, color="red")
 
 # HYPOTHESIS TESTING: ONE SAMPLE t-test ------
 
@@ -91,7 +91,7 @@ n_sample
 stdev <- sd(df_2016$Total_Sales)
 stdev
 
-t_result <- (sample_mean - 180)/(stdev/sqrt(n_sample-1))
+t_result <- (sample_mean - 200)/(stdev/sqrt(n_sample-1))
 t_result
 
 # T-TEST two.sided --------
@@ -100,6 +100,7 @@ t_result
 # ALTERNATE HYPOTHESIS: The sample and the historical sales have different mean
 
 t.test(x=df_2016$Total_Sales, mu=200, alternative = "two.sided")
+# p-value = 0.726 probability that I am wrong with the alternate hypothesis
 # The null hypothesis can not be rejected.
 
 # T-TEST Lower -------- 196 (sample) vs 200 (historical)
@@ -154,7 +155,7 @@ t.test(x=x, mu=20, alternative = 'less', conf.level = 0.95)
 # 
 # # One sided
 # # NULL HYPOTHESIS: The sample mileage average  is >= standard 20 kmpl
-# # Alternate hypothesis: The sample average is less than 20 kmpl
+# # Alternative hypothesis: The sample average is less than 20 kmpl
 # 
 # t.test(x=x, mu=20, alternative = 'greater', conf.level = 0.95)
 # 
@@ -216,6 +217,7 @@ t.test(df_2016$Orange_Medicine,
 # P(T<=t) two-tail	9.34756E-08	#   <<<<<<<<< p-value = 9.348e-08
 # t Critical two-tail	1.998971517	
 
+#####################################################################.
 # 4 PAIRED TWO SAMPLE T-TEST ----------
 
 # * 4.1 Plot Sales in same days of two periods -------
@@ -239,8 +241,8 @@ ggplot(dfTwoLinePlot, aes(x = Day)) +
 # Alternative Hypothesis: These is a difference
 
 t.test(df_2016$Total_Sales, 
-       df_2015$Total_Sales, paired = TRUE, alternative = "greater")
-
+      df_2015$Total_Sales, paired = TRUE, alternative = "two.sided")
+# The null hypothesis is rejected 
 
 # t-Test: Paired Two Sample for Means		
 # 
@@ -257,6 +259,7 @@ t.test(df_2016$Total_Sales,
 # P(T<=t) two-tail	1.08369E-09	
 # t Critical two-tail	2.042272456	
 
+#####################################################################.
 # 5 ANALYSIS OF VARIANCE (ANOVA) -------------
 
 Green_VA <- df_2016 %>% filter(Location=="VA") %>% select(Green_Medicine) %>% pull()
@@ -272,17 +275,18 @@ df_AOV
 df_2016 <- data.table(df_2016)
 df_2016_melted <- melt(df_2016, id.vars="Location", 
                        measure.vars = c("Green_Medicine", "Orange_Medicine"))
+df_2016_melted <- df_2016_melted %>% rename(Medicines = variable)
 df_2016_melted
 
 # * 5.1 One Way ANOVA test ------
 df_aov <- aov(df_2016_melted$value ~ factor(df_2016_melted$Location))
 summary(df_aov)
 
-df_aov <- aov(df_2016_melted$value ~ factor(df_2016_melted$variable))
+df_aov <- aov(df_2016_melted$value ~ factor(df_2016_melted$Medicines))
 summary(df_aov)
 
 # * 5.2 Performing Two Way ANOVA test in R ------
-df_aov <- aov(df_2016_melted$value ~ factor(df_2016_melted$Location) * factor(df_2016_melted$variable))
+df_aov <- aov(df_2016_melted$value ~ factor(df_2016_melted$Location) * factor(df_2016_melted$Medicines))
 summary(df_aov)
 
 
@@ -306,5 +310,27 @@ summary(mtcars_aov)
 
 # Step 4: Compare test statistics with F-Critical value
 # and conclude test p < alpha, Reject Null Hypothesis
+
+
+#####################################################################.
+# 6 LINEAR REGRESSION MULTIPLE VARIABLES ----------------------------
+
+head(df_2016)
+
+lm(formula = Total_Sales ~ Temperature + Ads_Papers + Price, data = df_2016,  )
+
+# Results
+# Coefficients:
+#   (Intercept)  Temperature   Ads_Papers        Price  
+# -18.8297       0.9343       1.6206     -85.8801  
+
+# Results in Excel - Data Analysis tools
+# Coefficients
+# Intercept	-18.82972
+# Temperature	0.934292297
+# Ads_Papers	1.620582414
+# Price	-85.88007278
+
+
 
 
