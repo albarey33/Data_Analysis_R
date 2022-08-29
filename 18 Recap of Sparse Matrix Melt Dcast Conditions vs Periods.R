@@ -29,7 +29,8 @@ path            <- "PopulationSamples"
 
 # 2 READ THE DATA FILE - SAMPLE 1500 patients -----------------------------------
 
-dtRECAP <- read.csv(list.files(path= path, full.names=TRUE, pattern="Recap_6mo.csv"))
+dtRECAP <- read.csv(list.files(path= path, full.names=TRUE, 
+                               pattern="Recap_6mo.csv"))
 dim(dtRECAP)
 
 str(dtRECAP)
@@ -73,7 +74,7 @@ dtRECAP$lastDate <- as.Date(paste(substr(dtRECAP$PPL,1,4),
 dtRECAP %>% group_by(PPL, lastDate) %>% tally() %>% arrange(desc(PPL)) 
 
 # * 4.4 Calculation Days between Last visit and day of enrollment (last day per month) ----
-# Time Intervals / Differences with difftime {base}
+# Time Intervals / Differences with difftime {base} # Days of difference
 dtRECAP$Days.Since.Last.CM.Interaction <- difftime(dtRECAP$lastDate, dtRECAP$Date.of.Last.CM.Interaction, units = 'days')
 dtRECAP$Days.Since.Last.Known.Practice.Visit <- difftime(dtRECAP$lastDate, dtRECAP$Date.of.Last.Known.Practice.Visit, units = 'days')
 dtRECAP$Days.Since.Last.Known.Wellness.Visit <- difftime(dtRECAP$lastDate, dtRECAP$Date.of.Last.Known.Wellness.Visit, units = 'days')
@@ -115,8 +116,9 @@ fx_melttables <- function(vectorconditions, dfdata){
   print(dffinal)
 }
 
-results <- fx_melttables(vectorcond[1:18], dtRECAP)
+results <- fx_melttables(vectorcond, dtRECAP)
 dim(results)
+results %>% group_by(variable) %>% summarize(total = sum(value))
 
 # * 5.2 Group by PPL and Practice. Summarise all variables (Conditions) ----
 
@@ -125,6 +127,8 @@ totaltable <- results %>% group_by(variable, PPL, Practice_Name) %>%
 totaltable
 
 str(totaltable)
+
+totaltable %>% group_by(variable) %>% tally()
 
 # 6 Example LinePlot (ggplot2) for one Condition (Hypertension) -------
 
