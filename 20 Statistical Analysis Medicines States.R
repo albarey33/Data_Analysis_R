@@ -331,6 +331,7 @@ lm(formula = Total_Sales ~ Temperature + Ads_Papers + Price, data = df_2016,  )
 # Ads_Papers	1.620582414
 # Price	-85.88007278
 
+# END -----------
 
 
 
