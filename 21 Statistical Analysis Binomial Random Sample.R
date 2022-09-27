@@ -21,8 +21,8 @@ lapply(required_packages, library, character.only = TRUE)
 
 # Generate from n=50 with a chance to get 1 equal to 0.3 and get 0 equal to 0.7
 set.seed(12345)
-binomrandsample <- rbinom(n = 50,1,prob = 0.3)
-
+binomrandsample <- rbinom(n = 50,1,prob = 0.3)  
+# table
 table(binomrandsample)/sum(table(binomrandsample))
 
 mean(binomrandsample)
