@@ -40,7 +40,7 @@ tab1 <- cbind(table(dat$count),
 colnames(tab1) <- c("Count", "Perc", "Cum.Perc")
 tab1 
 
-# 4 HISTOGRAM -----------
+# 3 HISTOGRAM -----------
 
 hist(dat$count)     # By default gives a wrong bucket distribution
 
@@ -53,7 +53,7 @@ ggplot(data=dat, aes(x=count))+
   scale_x_continuous(name="Cups of Coffee Per Day", breaks=0:10)+   # axis X
   scale_y_continuous(name="Frequency", breaks=seq(0, 50, 5), limits=c(NA, 30)) # axis Y
 
-# 5 CENTRAL TENDENCY - SUMMARY --------
+# 4 CENTRAL TENDENCY - SUMMARY --------
 
 # calculate the Skewness
 
