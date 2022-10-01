@@ -2,6 +2,8 @@
 ###################################################################.
 # SCRIPT: FREQUENCY CLAIMS TO ANALYZE ONE VARIABLE
 # USE CASE: VISUALIZE THE DISTRIBUTION OF ONE VARIABLE USING HISTOGRAM
+# EXAMPLE SOURCE: "Course: Data Science - Research Methods in R
+#                          - EDX / Microsoft. Module 3. Lab 1"
 ###################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
@@ -14,7 +16,6 @@ required_packages <- c("psych", "ggplot2", "Rmisc")
 lapply(required_packages, library, character.only = TRUE)
 
 # 1 LOAD THE DATA ------------------------------------
-# Read sample files using full path and regex (known pattern)
 
 dat <- data.frame(count=c(1,7,3,3,2,1,2,2,2,2,0,2,1,7,1,2,5,3,1,0,4,1,2,1,5,1,3,1,5,
                    5,1,3,1,4,2,3,1,4,1,5,3,1,6,1,1,2,1,2,3,0,2,1,0,1,6,1,2,3,
@@ -23,7 +24,7 @@ dat <- data.frame(count=c(1,7,3,3,2,1,2,2,2,2,0,2,1,7,1,2,5,3,1,0,4,1,2,1,5,1,3,
 
 # 2 TABLE: TABULATION TABLE --------
 table(dat$count)
-as.matrix(table(dat$count)) # The same, vertical
+as.matrix(table(dat$count)) # The same, vertically arranged
 
 # PERCENTAGES
 table(dat$count)/sum(!is.na(dat$count))
@@ -42,7 +43,7 @@ tab1
 
 # 3 HISTOGRAM -----------
 
-hist(dat$count)     # By default gives a wrong bucket distribution
+hist(dat$count)     # Base chart. By default gives a wrong bucket distribution
 
 # Using ggplot2 instead, with binwidth=1
 
