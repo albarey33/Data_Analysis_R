@@ -1,10 +1,10 @@
 
-###################################################################.
+####################################################################.
 # SCRIPT: FREQUENCY CLAIMS TO ANALYZE TWO GROUPS
 # USE CASE: VISUALIZE THE COMPARISON OF TWO GROUPS - STATISTICAL ANALYSIS
 # EXAMPLE SOURCE: "Course: Data Science - Research Methods in R
 #                          - EDX / Microsoft. Module 3. Lab 3 Causal Claims"
-###################################################################.
+####################################################################.
 
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
 
