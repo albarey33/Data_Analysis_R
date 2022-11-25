@@ -24,7 +24,7 @@ tablex <- function(x){print(table(x, useNA = 'always'))}
 tablexy <- function(x,y){print(table(x,y, useNA = 'always'))}
 
 #####################################################################.
-# 1 READ DATA nteractions data - all periods -------
+# 1 READ DATA Interactions data - all periods -------
 #####################################################################.
 
 # Paths: Location of Source files

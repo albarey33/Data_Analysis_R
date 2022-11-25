@@ -77,7 +77,7 @@ str(PPL_df)
 # str(PPL_df[,FirstCost:LastCost])
 costcols <- grep("Cost", names(PPL_df))
 
-# Apply fx to Convert Cost in text with commas "$0,000" to numeric
+# Apply fx to Convert Cost in text with commas "$0,000" to numeric - regular expression
 fx_convmoney <- function(x){as.numeric(gsub("[\\$,]", "", x))}
 
 PPL_df[,costcols] <- lapply(PPL_df[,costcols], fx_convmoney )

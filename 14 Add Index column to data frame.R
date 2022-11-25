@@ -11,7 +11,7 @@ prefixed <- stringr::str_pad(1:10, 3, side="left", pad="0")
 prefixed
 
 # Force to be an n digits value - if required add blank spaces before digit
-prefixed <- sprintf("%04s", prefixed)   # %s for character %d for digits
+prefixed <- sprintf("%03s", prefixed)   # %s for character %d for digits
 prefixed
 
 # Add a prefix letter to avoid auto conversion to number
@@ -78,3 +78,4 @@ head(PPL_df)
 
 str(PPL_df[1:10])
 
+######## END --------

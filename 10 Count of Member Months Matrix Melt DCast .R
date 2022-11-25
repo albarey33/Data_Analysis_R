@@ -14,12 +14,12 @@ library("data.table")
 df <- data.frame(Period = c(rep("202101",4),rep("202102",4),rep("202103",4),rep("202104",4)),
                  MID = c(c("7004R",NA     ,"9265T",NA),
                          c("7004R","7443N","9265T","2051R"),
-                         c("7004R","7443N","9265T","2051R"),
-                         c(NA,     NA ,    "9265T","2051R")) )
+                         c("7004R","7443N",NA,"2051R"),
+                         c(NA,     NA ,    NA,"2051R")) )
 df <- df %>% arrange(MID) %>% filter(!is.na(MID))
 df                 
 
-# * 6.5 MEMBER MONTHS CALCULATION -------------
+# * 1 RECAP OF PERIODS  -------------
 
 #ALL_PPL$Mem
 # dfPPL <- ALL_PPL %>% group_by(PPL) %>% arrange(PPL) %>% distinct(PPL) 

@@ -118,12 +118,14 @@ fx_melttables <- function(vectorconditions, dfdata){
 
 results <- fx_melttables(vectorcond, dtRECAP)
 dim(results)
+
 results %>% group_by(variable) %>% summarize(total = sum(value))
+
 
 # * 5.2 Group by PPL and Practice. Summarise all variables (Conditions) ----
 
 totaltable <- results %>% group_by(variable, PPL, Practice_Name) %>% 
-  summarise(Enrollees = sum(value), .groups = 'drop')
+  summarize(Enrollees = sum(value), .groups = 'drop')
 totaltable
 
 str(totaltable)
