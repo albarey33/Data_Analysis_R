@@ -12,7 +12,7 @@ st <- Sys.time()
 
 #devtools::session_info()
 .libPaths("C:/R_Libraries")
-# .libPaths("C:/Users/bbacareyes/Documents/R/win-library/4.0")
+# .libPaths("path/Documents/R/win-library/4.0")
 .libPaths() ###  Check the default folder where packages are installed
 
 # Load-multiple-packages-at-once
@@ -23,7 +23,7 @@ lapply(required_packages, library, character.only = TRUE)
 tibble::tibble(a = 1)
 
 # ADD IMPORTANT
-# ROOT_4C_ONEDRIVE <- "C:/Users/bbacareyes/Carolina Collaborative Community Care/4C Admin - DATA_Reports/"
+# ROOT_4C_ONEDRIVE <- "path/4C Admin - DATA_Reports/"
 
 ######### FUNCTION APPEND CSV FILES ALL PERIODS
 fx_csv_Interactions_Periods_data <- function(DataCSVfiles){
@@ -52,7 +52,7 @@ tablexy <- function(x,y){print(table(x,y, useNA = 'always'))}
 #####################################################################o
 
 # * 1.1 Reading data excel files per Staff Member -------------------------------
-setwd("C:/Users/bbacareyes/OneDrive - Carolina Collaborative Community Care")
+setwd(original_path)
 setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/DATA_ALL_PERIODS")
 
 getwd()
@@ -209,10 +209,10 @@ dfDuplicates %>% filter(paste(format.Date(dfDuplicates$Date.of.Interaction, "%Y"
  format.Date(dfDuplicates$Date.of.Interaction, "%m"), 
  sep="/") == "2021/04")
 
-#dfDuplicates %>% filter(Submitted.By == 'Stanhope, Melissa') %>% 
+#dfDuplicates %>% filter(Submitted.By == 'Nurse 1') %>% 
 #  select(Client,Date.of.Interaction, Duration)
 
-#dfDuplicates %>% filter(Submitted.By == 'McLeod, Carol') %>% 
+#dfDuplicates %>% filter(Submitted.By == 'Nurse 2') %>% 
 #  select(Client,Date.of.Interaction, Duration)
 
 ###########################################################################s
@@ -248,7 +248,7 @@ table(dfINT$Outgoing.Contact.Result, useNA = 'ifany')
 # 3 TABLES: PCI, Prim. Part, Mode ------------------------------------
 #####################################################################$
 
-#PENETRATION RATE:
+#COVERAGE RATE:
 #Denominator: All pts with CA-II at any point during the year
 #Numerator: All patients with a completed interaction within the year.
 # This includes calls, emails, video conferences, texts, 
@@ -264,7 +264,7 @@ dfINT <- dfINT %>% mutate(Mode2     = if_else(Mode %in%
       c("Fax", "Email", "ICT Meeting", "Videoconference", 
         "Text", "Other"), "Other", Mode))
 
-# # Mode without Fax or Mail (not in penetration rate numerator)
+# # Mode without Fax or Mail (not in COVERAGE rate numerator)
 # dfINT <- dfINT %>% mutate(ModewoFaxMail = if_else(Mode %in% 
 #       c("Call", "Visit", "Email", "ICT Meeting", "Videoconference", 
 #         "Text", "Other"), "Yes", ""))
@@ -329,8 +329,8 @@ dfINT %>% group_by(Interaction_Classification,
 
 # * 3.5 4C STAFF VS DEPARTMENTS  --------
 #setwd(ROOT_4C_ONEDRIVE)
-#setwd("D:/Information Technology/DATA_Reports/@Tables_Data")
-setwd("C:/Users/bbacareyes/OneDrive - Carolina Collaborative Community Care/DATA_Reports/@Tables_Data")
+#setwd("path/DATA_Reports/@Tables_Data")
+setwd("original_path/DATA_Reports/@Tables_Data")
 StaffDept <- read.csv("t_4C_STAFF_vs_DEPARTMENTS.csv")
 StaffDept %>% arrange(Department)
 dfINT <- dfINT %>% left_join(StaffDept, by=c('Submitted.By'))
@@ -551,7 +551,7 @@ tail(unique_w_incoming_OLD, 5)
 barplot(unique_w_incoming_OLD$Unique_Incoming_Patients, xlab = 'Week', 
         ylab = 'w Incoming OLD', col='gray')
 
-# * 8.3 UNIQUE PTS BY PENETRATION RATE --------
+# * 8.3 UNIQUE PTS BY COVERAGE RATE --------
 
 unique_w_incoming <- dfINT %>% 
   filter(Date.of.Interaction >= "2020-01-06") %>%                # "2020-01-06"
@@ -703,8 +703,8 @@ tail(unique_pts,3)
 # 13 MID - MEMBER NUMBER - ADD COLUMN FROM  -----------------
 #####################################################################o
 # IMPORT IMPORT IMPORT
-#setwd("D:/Information Technology/DATA_Reports/@Tables_Data")
-setwd("C:/Users/bbacareyes/OneDrive - Carolina Collaborative Community Care/DATA_Reports/@Tables_Data")
+#setwd("paths/@Tables_Data")
+setwd("original_path/DATA_Reports/@Tables_Data")
 tMbMID <- read.csv("table_dataVH.csv")
 head(tMbMID)
 #dfINT %>% filter(Member.Number == 'B01dsadf' & Date.of.Interaction == '2021-04-07')
@@ -782,7 +782,7 @@ dim(NA_NEWS) # COMPLETE "NO_MID_N/A" IN DATA TABLE tMbMID
 NA_NEWS %>% arrange(Client) %>% select(Client) %>% pull()
 
 # TO CHECK COMPLETE MISSING MIDs
-setwd("C:/Users/bbacareyes/OneDrive - Carolina Collaborative Community Care")
+setwd(original_path)
 setwd("./DATA_Reports/@Tables_Data")
 fwrite(NA_NEWS,   "NA_NEWS.csv")
 
@@ -812,14 +812,14 @@ head(recap_Last_52_weeks)
 recap_Last_52_weeks$Pt_Interactions <- rowSums(recap_Last_52_weeks[,5:6])
 recap_Last_52_weeks$Total <- rowSums(recap_Last_52_weeks[,5:8])
 
-# NUMERATOR PENETRATION RATE
+# NUMERATOR COVERAGE RATE
 nrow(recap_Last_52_weeks %>% filter(Pt_Interactions > 0) %>% distinct(MID))
 head(recap_Last_52_weeks)
 dim(recap_Last_52_weeks)
 recap_Last_52_weeks$Int_Group <- ifelse(recap_Last_52_weeks$Pt_Interactions > 0,
                           'Completed','Other/UTR')
 
-#7557/7438 # CHECK WITH THE NUMBER IN SLA PENETRATION RATE CARE IMPACT SYSTEM !
+#7557/7438 # CHECK WITH THE NUMBER IN SLA COVERAGE RATE CARE IMPACT SYSTEM !
 tablex(recap_Last_52_weeks$Int_Group)
 
 # ONLY OTHER (MAIL / FAX)
@@ -865,14 +865,14 @@ head(recap_2021)
 recap_2021$Pt_Interactions <- rowSums(recap_2021[,5:6])
 recap_2021$Total <- rowSums(recap_2021[,5:8])
 
-# NUMERATOR PENETRATION RATE
+# NUMERATOR COVERAGE RATE
 nrow(recap_2021 %>% filter(Pt_Interactions > 0) %>% distinct(MID))
 head(recap_2021)
 dim(recap_2021)
 recap_2021$Int_Group <- ifelse(recap_2021$Pt_Interactions > 0,
                                         'Completed','Other/UTR')
 
-#7557/7438 # CHECK WITH THE NUMBER IN SLA PENETRATION RATE CARE IMPACT SYSTEM !
+#7557/7438 # CHECK WITH THE NUMBER IN SLA COVERAGE RATE CARE IMPACT SYSTEM !
 tablex(recap_2021$Int_Group) # CONSIDER THIS NUMBER FOR THE REPORT 2021-09-21
 # 7237
 
@@ -1004,8 +1004,8 @@ recaplastweek <- recaplastweek %>% arrange(desc(CompletedPCI), desc(Total_INT))
 
 # DATA.TABLE::FWRITE
 #setwd("../")
-#setwd("D:/Information Technology/DATA_Reports/REPORT_INTERACTIONS_VH/FILES_FROM_R")
-setwd("C:/Users/bbacareyes/OneDrive - Carolina Collaborative Community Care")
+#setwd("path/DATA_Reports/REPORT_INTERACTIONS_VH/FILES_FROM_R")
+setwd(original_path)
 setwd("./DATA_Reports/REPORT_INTERACTIONS_VH/INT_FILES_FROM_R")
 
 getwd()
@@ -1013,7 +1013,7 @@ getwd()
 #setwd("../DATA_ALL_PERIODS")
 #getwd()
 
-#setwd("D:/Information Technology/DATA_Reports/DATASOURCE_INTERACTIONS_VH_CM")
+#setwd("path/DATA_Reports/DATASOURCE_INTERACTIONS_VH_CM")
 format.Date(today(), '%Y%m%d')
 data.table::fwrite(unique_pts, file=paste0("unique_recap_",format.Date(today(),'%Y%m%d'),".csv"))  # Imported in Excel
 data.table::fwrite(dfINT, file=paste0("All_Interactions_",format.Date(today(),'%Y%m%d'),".csv")) # Imported in Excel
