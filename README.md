@@ -1,6 +1,12 @@
-# Data_Analysis_R
+# DATA_ANALYSIS_R
 
-Scripts in R for Data Preprocessing Tasks.
+# Explanation: 
+
+## https://albarey33.github.io/posts/DataAnalysis/
+
+Procedures to process data, taking from different sources, folders and files, taking a pattern from the name to include it as a field necessary for recap of info.
+
+## Scripts in R for Data Preprocessing Tasks.
 
 -   Merging Excel Files with readxl
 -   
