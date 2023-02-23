@@ -45,6 +45,7 @@ fx_readfiles <- function(filename){
 PPL_df <- fx_readfiles(filenames_list)
 class(PPL_df)
 dim(PPL_df)
+head(PPL_df[,c("Medicaid.ID", "Practice...NPI")],10)
 
 # Structure of Fields with "Practice" in their names
 str(PPL_df[c(grep("Practice",names(PPL_df)))])
@@ -82,7 +83,7 @@ str(PPL_df[c(grep("Practice",names(PPL_df)))])
 OnlyPractices <- PPL_df %>% select(c("Medicaid.ID",
                                      "Practice_Name"))
 
-head(OnlyPractices,5)
+head(OnlyPractices,10)
 
 resultingfile   <- "PopulationSamples//OnlyPractices.csv" 
 
