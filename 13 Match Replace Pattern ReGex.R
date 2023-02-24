@@ -18,18 +18,24 @@ substr(df$Zip,1,5)
 # grep - Pattern Matching and Replacement 
 x <- "$12,543.43"
 as.numeric(gsub("[\\$,]", "", x))   # replace "$" and "," for ""
+x
 
+# gsub
 df <- data.frame(Int_Date = c("12/9/2019 12:00:00 AM",
                               "2/20/2020 12:00:00 AM",
                               "5/4/2020 12:00:00 AM"))
+df
+
+# GSUB Two methods to delete the time " 12:00:00 AM" string
 gsub('([0-9]+) .*', '\\1', df$Int_Date)
+
 sub(" 12:00:00 AM","",df$Int_Date)
 
-# Values with a string in pattern
+# GREP: Values with a string in pattern
 grep("2020",df$Int_Date, value = T )
 
 # Remove comma in 1000 value
-df <- data.frame(Score = c("1,000","702","785","843","757"))
-as.integer(gsub("[\\,]", "", df$Score))
+df2 <- data.frame(Score = c("1,000","702","785","843","757"))
+as.integer(gsub("[\\,]", "", df2$Score))
 
 ########################### END ------ 
