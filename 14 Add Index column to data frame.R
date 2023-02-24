@@ -18,8 +18,6 @@ prefixed
 prefixed <- paste0('E',prefixed)
 prefixed
 
-
-
 # 0 PREPARE INSTALL CALL PACKAGES -----------------------------------------
 
 rm(list=ls()) # Delete all objects
