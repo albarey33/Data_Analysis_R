@@ -47,7 +47,16 @@ dfINT[] <- lapply(dfINT, function(x) {
   if (inherits(x, "POSIXt")) lubridate::as_date(x) else x
 })
 
-str(dfINT)
+# Changes of Format for Date Fields
+
+sampledates <- dfINT[sample(1:9000,10),"Date.of.Interaction"]
+asinteger   <- as.integer(sampledates) # As numeric
+asdate      <- sampledates  # Already converted to date
+ascharmdy   <- format(sampledates, format="%m/%d/%Y") # as character
+asdatelubri <- lubridate::mdy(ascharmdy)     # back as date using lubridate
+
+data.frame(asinteger, asdate, ascharmdy, asdatelubri)
+str(data.frame(asinteger, asdate, ascharmdy, asdatelubri))
 
 # * 2.2 Other options to convert dates
 class(base::as.Date(dfINT$Date.of.Interaction))
@@ -65,6 +74,7 @@ lubridate::mdy(format(dfINT$DOB, format="%m/%d/%Y"))                 # as charac
 
 # 3 RECAP PER YEAR - MONTH with format.Date ---------
 
+# Using Tables
 tablexy(lubridate::year(dfINT$Date.of.Interaction),
         lubridate::month(dfINT$Date.of.Interaction))
 
@@ -75,7 +85,6 @@ table(paste(format.Date(dfINT$Date.of.Interaction, "%Y"),
 head(dfINT %>% filter(paste(format.Date(Date.of.Interaction, "%Y"),
                               format.Date(Date.of.Interaction, "%m"), 
                               sep="/") == "2021/04"),5)
-
 
 # 4 CHANGE SPECIFIC VALUES (example a date) ----
 
