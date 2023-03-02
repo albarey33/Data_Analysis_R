@@ -78,6 +78,11 @@ lubridate::mdy(format(dfINT$DOB, format="%m/%d/%Y"))                 # as charac
 tablexy(lubridate::year(dfINT$Date.of.Interaction),
         lubridate::month(dfINT$Date.of.Interaction))
 
+# Recap year ~ month with Lubridate:
+table(lubridate::year(dfINT$Date.of.Interaction),
+      lubridate::month(dfINT$Date.of.Interaction), useNA = "ifany")
+
+# Recap year ~ month using format Date:
 table(paste(format.Date(dfINT$Date.of.Interaction, "%Y"),
             format.Date(dfINT$Date.of.Interaction, "%m"), sep="/"))
 
