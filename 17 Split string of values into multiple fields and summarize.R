@@ -1,11 +1,7 @@
 
-###################################################################.
-# SCRIPT: Interactions by date with de-identified pt info
-# Change Date formats. # Convert POSIXct, format to Date, format
-# EXAMPLE: INTERACTIONS by date
-# Algorithms in this script:
-# * 
-########################################################################.
+##################################################################.
+# SCRIPT: Split merged values to count them separately and summarize
+##################################################################.
 
 # 0. PREPARE INSTALL CALL PACKAGES ---------------------------------------------------
 
@@ -43,11 +39,9 @@ dfINT$YearMonth <- paste(format.Date(dfINT$Date.of.Interaction, "%Y"),
                          format.Date(dfINT$Date.of.Interaction, "%m"),sep = "-")
 
 
-# 2 REASON FOR SERVICE ONLY INTERACTIONS WITHOUT UTR ----------------
+# 2 REASON UTR (Unable to Reach) from data ----------------
 
-tail(dfINT %>% group_by(Reason.s..for.Service) %>% tally,10)
-
-# Split a string of values into multiple columns per value
+dfINT %>% group_by(Reason.s..for.Service) %>% tally %>% arrange(desc(n))
 
 ### Data WITHOUT UTR
 dfRecapNoUTR <- dfINT %>% filter(Outgoing.Contact.Result != "Unable to Reach (UTR)")
@@ -55,17 +49,20 @@ dfRecapNoUTR$ID <- seq.int(nrow(dfRecapNoUTR))   # Add an ID Index column
 str(dfRecapNoUTR)
 dim(dfRecapNoUTR)
 
+# 3 SPLIT A STRING OF VALUES INTO MULTIPLE COLUMNS PER VALUE ----
+### USING COMMA AS SEPARATOR 
 dat <- with(dfRecapNoUTR, strsplit(Reason.s..for.Service, ','))
 dat  # Lists within lists
-df2 <- data.frame(ID = factor(rep(dfRecapNoUTR$ID, times = lengths(dat)),
+df2 <- data.frame(ID = factor(rep(dfRecapNoUTR$ID, 
+                                  times = lengths(dat)),
                               levels = dfRecapNoUTR$ID),
                   Reason.s..for.Service = unlist(dat))
 head(df2) # ALL ID ~ Reasons
 
 # Sparse Matrix. Convert table to data frame
 df3 <- as.data.frame(cbind(ID = dfRecapNoUTR$ID,
-                           table(df2$ID, df2$Reason.s..for.Service)))  
-head(df3)
+                   table(df2$ID, df2$Reason.s..for.Service)))  
+head(df3,6)
 str(df3)
 
 dfRecapReasons <- dfRecapNoUTR %>% select("YearMonth", "ID") %>% 
@@ -74,7 +71,7 @@ dfRecapReasons <- dfRecapNoUTR %>% select("YearMonth", "ID") %>%
 str(dfRecapReasons)   # MONTHS + ID + 17 REASONS
 head(dfRecapReasons)
 
-# 3 RECAP PER YEAR - MONTH ---------
+# 4 RECAP PER YEAR - MONTH ---------
 
 dfRecapReasons <- data.table(dfRecapReasons %>% 
                                group_by(YearMonth) %>% 
