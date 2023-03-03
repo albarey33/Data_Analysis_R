@@ -49,6 +49,15 @@ AllEnrollees <- data.frame(read.csv(file=filenames_list)) # full.names=TRUE,
 str(AllEnrollees)
 dim(AllEnrollees)
 
+# 4.1 Data Frame for Post -----
+
+clinical_conditions2 <- c("Asthma","CVA.Stroke",
+                          "Chr.Kidney.Dis",  "Chronic.Pain", 
+                          "COPD",  "Diabetes",  "CHF")
+
+dfclinicalconditions <- data.frame(AllEnrollees[c(192, 111, 128, 163, 87, 74, 37, 7, 396, 311, 306),clinical_conditions2])
+dfclinicalconditions
+
 # 5 RENAME COLUMN NAMES ----------------------------
 # Necessary that column names match with the replacement names
 # in order to execute the function
@@ -154,6 +163,7 @@ ChangeName <- c(special_conditions,clinical_conditions,BH_Conditions)
 ChangeName   # ALL FIELDS THAT WILL CHANGE YES BY FIELD NAME
 tablex(ChangeName %in% names(AllEnrollees))
 head(AllEnrollees[,ChangeName],3)
+AllEnrollees
 
 # Vector_from_ifelse: Names that replace the original "Yes" value
 # Necessary that column names match with the replacement names
@@ -260,3 +270,27 @@ t(AllEnrollees[sample(nrow(AllEnrollees),1),])
 ls()
 Sys.time() - st
 
+# 12 Brief example for post - From 4.1  ------------------
+
+dfclinicalconditions
+
+# Defined function to convert the values "Yes" into the name of the condition
+fxonlyfieldnamestochangevalues <- function(df){
+  for(ii in seq_along(df)){
+    df[,ii] <- ifelse(df[,ii]  == "Yes", names(df)[ii],"")
+  }
+  df
+}
+
+# Applying Function
+dfclinicalconditions <- fxonlyfieldnamestochangevalues(dfclinicalconditions)
+dfclinicalconditions
+
+# Mergin the values
+allconditions <- apply( dfclinicalconditions,1,paste,collapse = ",")
+allconditions
+allconditions <- gsub("^,*|(?<=,),|,*$","", allconditions, perl=T)
+allconditions <- gsub(",", ", ", allconditions)
+dfclinicalconditions$onecolumn <- allconditions
+dfclinicalconditions <- dfclinicalconditions %>% select(onecolumn, everything())
+dfclinicalconditions
